@@ -1,0 +1,26 @@
+{
+  "name": "fly",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon -r dotenv/config server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "barelog": "^0.2.0",
+    "neon-query-bench": "github:evanshortiss/neon-query-bench"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.3",
+    "dotenv": "^16.3.1",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}

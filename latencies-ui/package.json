@@ -1,0 +1,39 @@
+{
+  "name": "latencies-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "deploy:prod": "vercel deploy --prod",
+    "deploy:preview": "vercel deploy",
+    "drizzle:generate": "drizzle-kit generate:pg",
+    "drizzle:push": "drizzle-kit push:pg",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.6.1",
+    "barelog": "^0.2.0",
+    "drizzle-orm": "^0.29.1",
+    "env-var": "^7.4.1",
+    "neon-query-bench": "github:evanshortiss/neon-query-bench",
+    "next": "14.0.4",
+    "pino": "^8.17.2",
+    "react": "^18",
+    "react-dom": "^18"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "drizzle-kit": "^0.20.7",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "pino-pretty": "^10.3.1",
+    "postcss": "^8",
+    "tailwindcss": "^3.3.0",
+    "typescript": "^5"
+  }
+}

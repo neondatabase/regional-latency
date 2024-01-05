@@ -1,0 +1,19 @@
+{
+  "name": "cloudflare",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "deploy:smart": "wrangler deploy -c wrangler.smart.toml",
+    "deploy:default": "wrangler deploy -c wrangler.default.toml",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20231218.0",
+    "typescript": "^5.0.4",
+    "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "neon-query-bench": "github:evanshortiss/neon-query-bench"
+  }
+}
