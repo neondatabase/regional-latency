@@ -3,6 +3,8 @@ import type { NextRequest } from 'next/server';
 import { Benchmarks, db } from '@/lib/drizzle';
 import { gte } from 'drizzle-orm';
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   const ts = new Date()
   

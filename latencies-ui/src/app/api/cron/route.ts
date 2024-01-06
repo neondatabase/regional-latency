@@ -4,6 +4,8 @@ import pino from 'pino'
 import { Benchmarks, db } from '@/lib/drizzle'
 import { randomUUID } from 'crypto'
 
+export const dynamic = "force-dynamic";
+
 const log = pino({
   level: process.env.LOG_LEVEL || 'info'
 })
@@ -14,7 +16,7 @@ type Endpoint = {
   apiKey: string
 }
 
-export default async function handler(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const timestamp = new Date()
 
   log.info('starting benchmark cron job')
@@ -48,7 +50,11 @@ export default async function handler(req: NextRequest) {
     }
   }
   
-  return NextResponse.json({ status: 'cron complete. see logs for errors and other details' })
+  return NextResponse.json({
+    message: `cron complete for ${endpoints.length} endpoints. see logs for errors and other details`
+  }, {
+    status: 200
+  })
 }
 
 /**
