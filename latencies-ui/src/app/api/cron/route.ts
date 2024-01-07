@@ -114,7 +114,8 @@ function getBenchmarkEndpoints (): Endpoint[] {
     ...process.env,
     
     // Run the benchmark against this specific deployment on Vercel
-    DB_BENCH_ENDPOINT_VERCEL_IAD: new URL(`https://${process.env.VERCEL_URL}/api/nqb`).toString()
+    DB_BENCH_ENDPOINT_VERCEL_SELF: new URL(`https://${process.env.VERCEL_URL}/api/nqb`).toString(),
+    DB_BENCH_APIKEY_VERCEL_SELF: process.env.NQB_API_KEY
   }
 
   const URL_PREFIX = 'DB_BENCH_ENDPOINT_'
