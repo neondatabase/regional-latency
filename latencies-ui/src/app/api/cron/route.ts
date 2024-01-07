@@ -110,11 +110,18 @@ async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>
  * @returns {Endpoint[]}
  */
 function getBenchmarkEndpoints (): Endpoint[] {
+  const env: NodeJS.ProcessEnv = {
+    ...process.env,
+    
+    // Run the benchmark against this specific deployment on Vercel
+    DB_BENCH_ENDPOINT_VERCEL_IAD: new URL(`https://${process.env.VERCEL_URL}/api/nqb`).toString()
+  }
+
   const URL_PREFIX = 'DB_BENCH_ENDPOINT_'
   const API_KEY_PREFIX = 'DB_BENCH_APIKEY_'
   const endpoints: Endpoint[] = []
 
-  Object.keys(process.env).forEach((varName) => {
+  Object.keys(env).forEach((varName) => {
     if (varName.startsWith(URL_PREFIX)) {
       const id = varName.split(URL_PREFIX)[1]
       
@@ -122,8 +129,8 @@ function getBenchmarkEndpoints (): Endpoint[] {
         log.warn(`variable named ${varName} is missing suffix`)
       } else {
         log.info(`parsing endpoint config for environment variable named "${varName}"`)
-        const apiKey = process.env[`${API_KEY_PREFIX}${id}`]
-        const url = process.env[varName]
+        const apiKey = env[`${API_KEY_PREFIX}${id}`]
+        const url = env[varName]
 
         if (!apiKey || !url) {
           log.warn(`expected api key in variable "${API_KEY_PREFIX}${id}" or URL in ${varName}, but they were missing`)
