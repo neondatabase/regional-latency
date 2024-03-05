@@ -4,10 +4,14 @@ import { NextRequest, NextResponse } from "next/server"
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const { runner, platform } = getBenchmarkInstance(process.env)
+  const { runner, platform } = getBenchmarkInstance({
+    NQB_DATABASE_URL: process.env.NEON_DB_US_EAST_1,
+    NQB_API_KEY: process.env.NQB_API_KEY
+  })
 
   const queryRunnerResult = await runner({
-    apiKey: process.env.NQB_API_KEY ? request.headers.get('x-api-key') ?? undefined : undefined
+    count: 10,
+    apiKey: process.env.NQB_API_KEY
   })
 
   const response: QueryRecordPayload = {

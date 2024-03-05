@@ -3,6 +3,7 @@ import { QueryRecordPayload } from 'neon-query-bench'
 import pino from 'pino'
 import { Benchmarks, db } from '@/lib/drizzle'
 import { randomUUID } from 'crypto'
+import secureCron from '@/lib/secure-cron'
 
 export const dynamic = "force-dynamic";
 
@@ -16,45 +17,39 @@ type Endpoint = {
   apiKey: string
 }
 
-export async function GET(req: NextRequest) {
-  const timestamp = new Date()
-
+export async function GET(req: NextRequest, res: NextRequest) {
   log.info('starting benchmark cron job')
 
-  // https://vercel.com/docs/cron-jobs/manage-cron-jobs#securing-cron-jobs
-  const authHeader = req.headers.get('authorization');
+  secureCron(req, async () => {
+    const timestamp = new Date()
+    
+    const endpoints = getBenchmarkEndpoints()
+    const results = await Promise.allSettled(endpoints.map(e => processEndpoint(e)))
   
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    log.error('cron invocation terminated due to missing or incorrect authorization header')
-    return new Response('Unauthorized', {
-      status: 401,
-    });
-  }
+    for (const r of results) {
+      if (r.status === 'fulfilled') {
+        const { value } = r
   
-  const endpoints = getBenchmarkEndpoints()
-  const results = await Promise.allSettled(endpoints.map(e => processEndpoint(e)))
-
-  for (const r of results) {
-    if (r.status === 'fulfilled') {
-      const { value } = r
-
-      await db.insert(Benchmarks).values({
-        platformName: value.platformName,
-        platformRegion: value.platformRegion,
-        neonRegion: value.queryRunnerResult.neonRegion,
-        queryTimes: value.queryRunnerResult.queryTimes.map(qt => qt.end - qt.start),
-        timestamp
-      })
-    } else {
-      log.error((r.reason as Error).message)
+        await db.insert(Benchmarks).values({
+          platformName: value.platformName,
+          platformRegion: value.platformRegion,
+          neonRegion: value.queryRunnerResult.neonRegion,
+          queryTimes: value.queryRunnerResult.queryTimes.map(qt => qt.end - qt.start),
+          timestamp
+        })
+      } else {
+        log.error((r.reason as Error).message)
+      }
     }
-  }
-  
-  return NextResponse.json({
-    message: `cron complete for ${endpoints.length} endpoints. see logs for errors and other details`
-  }, {
-    status: 200
+    
+    return NextResponse.json({
+      message: `cron complete for ${endpoints.length} endpoints. see logs for errors and other details`
+    }, {
+      status: 200
+    })
   })
+
+
 }
 
 /**
@@ -113,9 +108,13 @@ function getBenchmarkEndpoints (): Endpoint[] {
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     
-    // Run the benchmark against this specific deployment on Vercel
-    DB_BENCH_ENDPOINT_VERCEL_SELF: new URL(`https://${process.env.VERCEL_URL}/api/nqb`).toString(),
-    DB_BENCH_APIKEY_VERCEL_SELF: process.env.NQB_API_KEY
+    // Run the benchmark from Vercel to Neon US East 2
+    DB_BENCH_ENDPOINT_VERCEL_US_EAST_2: new URL(`https://${process.env.VERCEL_URL}/api/nqb/us-east-2`).toString(),
+    DB_BENCH_APIKEY_VERCEL_US_EAST_2: process.env.NQB_API_KEY,
+
+    // Run the benchmark from Vercel to Neon US East 1
+    DB_BENCH_ENDPOINT_VERCEL_US_EAST_1: new URL(`https://${process.env.VERCEL_URL}/api/nqb/us-east-1`).toString(),
+    DB_BENCH_APIKEY_VERCEL_US_EAST_1: process.env.NQB_API_KEY
   }
 
   const URL_PREFIX = 'DB_BENCH_ENDPOINT_'
