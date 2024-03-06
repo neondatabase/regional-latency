@@ -26,6 +26,8 @@ export async function GET(req: NextRequest, res: NextRequest) {
     const endpoints = getBenchmarkEndpoints()
     const results = await Promise.allSettled(endpoints.map(e => processEndpoint(e)))
   
+    log.info('finished procesing all endpoints. updating database with results')
+
     for (const r of results) {
       if (r.status === 'fulfilled') {
         const { value } = r
