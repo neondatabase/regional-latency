@@ -15,8 +15,9 @@ export default async function secureCron (req: NextRequest, handler: () => Promi
     })
   } else {
     try {
+      log.info(`invoking cron handler for ${req.url}`)
       const res = await handler()
-
+      log.info(`cron handler for ${req.url} complete`)
       return res
     } catch (e) {
       log.error(`error executing cron endpoint ${req.url}`, e)

@@ -17,10 +17,10 @@ type Endpoint = {
   apiKey: string
 }
 
-export async function GET(req: NextRequest, res: NextRequest) {
+export async function GET(req: NextRequest, res: NextRequest): Promise<NextResponse> {
   log.info('starting benchmark cron job')
 
-  secureCron(req, async () => {
+  return secureCron(req, async () => {
     const timestamp = new Date()
     
     const endpoints = getBenchmarkEndpoints()
