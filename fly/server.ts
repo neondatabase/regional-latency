@@ -3,7 +3,7 @@ import log from 'barelog'
 import nqb, { QueryRecordPayload } from 'neon-query-bench'
 
 const server = http.createServer(listener)
-const { platform, runner } = nqb(process.env)
+const { platform, runner, version } = nqb(process.env)
 
 async function listener(req: http.IncomingMessage, res: http.ServerResponse) {
   const pathname = req.url
@@ -21,7 +21,8 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse) {
       const payload: QueryRecordPayload = {
         platformName: platform.getPlatformName(),
         platformRegion: platform.getPlatformRegion(),
-        queryRunnerResult
+        queryRunnerResult,
+        version
       }
 
       res.setHeader('content-type', 'application/json')
