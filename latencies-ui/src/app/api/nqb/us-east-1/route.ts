@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server"
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
-  const { runner, platform } = getBenchmarkInstance({
+  const { runner, platform, version } = getBenchmarkInstance({
     // Required to identify this as a vercel environment
     ...process.env,
 
@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
 
   const response: QueryRecordPayload = {
     queryRunnerResult,
+    version,
     platformName: platform.getPlatformName(),
     platformRegion: platform.getPlatformRegion()
   }
