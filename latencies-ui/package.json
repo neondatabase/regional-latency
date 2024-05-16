@@ -4,8 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "deploy:prod": "vercel deploy --prod",
-    "deploy:preview": "vercel deploy",
     "drizzle:generate": "drizzle-kit generate:pg",
     "drizzle:push": "drizzle-kit push:pg",
     "build": "next build",
@@ -17,7 +15,7 @@
     "barelog": "^0.2.0",
     "drizzle-orm": "^0.29.1",
     "env-var": "^7.4.1",
-    "neon-query-bench": "github:evanshortiss/neon-query-bench",
+    "neon-query-bench": "^0.4.1",
     "next": "14.0.4",
     "pino": "^8.17.2",
     "react": "^18",

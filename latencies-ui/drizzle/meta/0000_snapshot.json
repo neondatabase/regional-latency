@@ -1,18 +1,24 @@
 {
-  "id": "cbbaf266-f85f-4125-bc43-565694f4ccb7",
+  "id": "d5ff24b3-78d3-4075-910c-3c76f99945eb",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
-    "benchmarks": {
-      "name": "benchmarks",
-      "schema": "",
+    "results": {
+      "name": "results",
+      "schema": "benchmarks",
       "columns": {
         "id": {
           "name": "id",
           "type": "serial",
           "primaryKey": true,
           "notNull": true
+        },
+        "run_id": {
+          "name": "run_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "platform_name": {
           "name": "platform_name",
@@ -39,16 +45,67 @@
           "notNull": true,
           "default": "now()"
         },
-        "query_times": {
-          "name": "query_times",
+        "query_times_cold": {
+          "name": "query_times_cold",
+          "type": "integer[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "query_times_hot": {
+          "name": "query_times_hot",
           "type": "integer[]",
           "primaryKey": false,
           "notNull": true
         }
       },
       "indexes": {
-        "benchmark_timestamp_idx": {
-          "name": "benchmark_timestamp_idx",
+        "benchmark_results_ts_idx": {
+          "name": "benchmark_results_ts_idx",
+          "columns": [
+            "timestamp"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "results_run_id_runs_id_fk": {
+          "name": "results_run_id_runs_id_fk",
+          "tableFrom": "results",
+          "tableTo": "runs",
+          "columnsFrom": [
+            "run_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "runs": {
+      "name": "runs",
+      "schema": "benchmarks",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "benchmark_runs_ts_idx": {
+          "name": "benchmark_runs_ts_idx",
           "columns": [
             "timestamp"
           ],
@@ -61,7 +118,9 @@
     }
   },
   "enums": {},
-  "schemas": {},
+  "schemas": {
+    "benchmarks": "benchmarks"
+  },
   "_meta": {
     "schemas": {},
     "tables": {},

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { QueryRecordPayload } from 'neon-query-bench'
 import pino from 'pino'
-import { Benchmarks, db } from '@/lib/drizzle'
+import { BenchmarkRuns, BenchmarkResults, db } from '@/lib/drizzle'
 import { randomUUID } from 'crypto'
 import secureCron from '@/lib/secure-cron'
 
@@ -28,30 +28,42 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
   
     log.info('finished procesing all endpoints. updating database with results')
 
-    for (const r of results) {
-      if (r.status === 'fulfilled') {
-        const { value } = r
-  
-        await db.insert(Benchmarks).values({
-          platformName: value.platformName,
-          platformRegion: value.platformRegion,
-          neonRegion: value.queryRunnerResult.neonRegion,
-          queryTimes: value.queryRunnerResult.queryTimes.map(qt => qt.end - qt.start),
-          timestamp
-        })
-      } else {
-        log.error((r.reason as Error).message)
+    await db.transaction(async (tx) => {
+      // Create an entry for this specific test run
+      log.debug('insert new run to generate run ID')
+      const row = await tx.insert(BenchmarkRuns).values({ timestamp }).returning()
+      const { id } = row[0]
+
+      // Store indivual results for this test run
+      log.debug(`run id is: ${id}`)
+      for (const r of results) {
+        if (r.status === 'fulfilled') {
+          const { value } = r
+
+          log.debug(`insert endpoint result for run ${id}: ${ value }`)
+
+          await tx.insert(BenchmarkResults).values({
+            run_id: id,
+            platformName: value.platformName,
+            platformRegion: value.platformRegion,
+            neonRegion: value.queryRunnerResult.neonRegion,
+            queryTimesCold: value.queryRunnerResult.queryTimesCold.map(qt => qt.end - qt.start),
+            queryTimesHot: value.queryRunnerResult.queryTimesHot.map(qt => qt.end - qt.start),
+            version: value.version,
+            timestamp
+          })
+        } else {
+          log.error((r.reason as Error).message)
+        }
       }
-    }
-    
+    })
+
     return NextResponse.json({
       message: `cron complete for ${endpoints.length} endpoints. see logs for errors and other details`
     }, {
       status: 200
     })
   })
-
-
 }
 
 /**
@@ -93,7 +105,7 @@ async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>
       throw new Error(`failed to process endpoint ${id}. exception message was "${e.message}"`)
     } else {
       const errorId = randomUUID()
-      log.error(`exception (${errorId}) processing ${id}`)
+      log.error(`exception (${errorId}) processing ${id}:`)
       log.error(e)
 
       throw new Error(`exception thrown when processing endpoint ${id}. search logs for "${errorId}" for more information`)

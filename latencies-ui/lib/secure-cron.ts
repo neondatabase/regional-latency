@@ -20,7 +20,8 @@ export default async function secureCron (req: NextRequest, handler: () => Promi
       log.info(`cron handler for ${req.url} complete`)
       return res
     } catch (e) {
-      log.error(`error executing cron endpoint ${req.url}`, e)
+      log.error(`error executing cron endpoint ${req.url}:`)
+      log.error(e)
       return NextResponse.json({
         message: 'Internal server error'
       }, {

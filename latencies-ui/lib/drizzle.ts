@@ -1,35 +1,55 @@
-import { neon, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-http";
+import { Pool } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
 import {
-  pgTable,
   serial,
   text,
   timestamp,
   index,
-  integer
+  integer,
+  pgSchema
 } from 'drizzle-orm/pg-core'
 import { InferSelectModel} from 'drizzle-orm'
 
-neonConfig.fetchConnectionCache = true;
+export const schema = pgSchema('benchmarks')
 
-export const Benchmarks = pgTable(
-  'benchmarks',
+export const BenchmarkRuns = schema.table(
+  'runs',
   {
-    id: serial('id').primaryKey().notNull(),
-    platformName: text('platform_name').notNull(),
-    platformRegion: text('platform_region').notNull(),
-    neonRegion: text('neon_region').notNull(),
-    timestamp: timestamp('timestamp').defaultNow().notNull(),
-    queryTimes: integer('query_times').array().notNull()
+    id: serial('id').primaryKey(),
+    timestamp: timestamp('timestamp').defaultNow().notNull()
   },
   (benchmarks) => {
     return {
-      timestampIdx: index('benchmark_timestamp_idx').on(benchmarks.timestamp)
+      timestampIdx: index('benchmark_runs_ts_idx').on(benchmarks.timestamp)
     }
   }
 )
 
-export type Benchmark = InferSelectModel<typeof Benchmarks>
+export const BenchmarkResults = schema.table(
+  'results',
+  {
+    id: serial('id').primaryKey(),
+    run_id: integer('run_id').references(() => BenchmarkRuns.id),
+    platformName: text('platform_name').notNull(),
+    platformRegion: text('platform_region').notNull(),
+    neonRegion: text('neon_region').notNull(),
+    timestamp: timestamp('timestamp').defaultNow().notNull(),
+    queryTimesCold: integer('query_times_cold').array().notNull(),
+    queryTimesHot: integer('query_times_hot').array().notNull(),
+    version: text('version').notNull()
+  },
+  (benchmarks) => {
+    return {
+      timestampIdx: index('benchmark_results_ts_idx').on(benchmarks.timestamp)
+    }
+  }
+)
 
-export const sql = neon(process.env.DATABASE_URL!);
-export const db = drizzle(sql, { schema: { Benchmarks } })
+export type BenchmarkRun = InferSelectModel<typeof BenchmarkRuns>
+export type BenchmarkResult = InferSelectModel<typeof BenchmarkResults>
+
+export const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
+export const db = drizzle(pool, {
+  schema: { BenchmarkRuns, BenchmarkResults },
+  logger: process.env.DRIZZLE_LOG_ENABLED === 'true'
+})
