@@ -11,7 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^0.6.1",
+    "@neondatabase/serverless": "^0.9.3",
     "@tremor/react": "^3.17.2",
     "barelog": "^0.2.0",
     "drizzle-orm": "^0.29.1",
