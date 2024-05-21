@@ -1,22 +1,37 @@
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
+"use client";
+import { Inter as FontSans } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+import { cn } from "@/lib/utils";
 
-export const metadata: Metadata = {
-  title: 'Neon Regional Latencies',
-  description: 'View the latencies of queries to Neon databases across different deployment platforms and regions.',
-}
+const fontSans = FontSans({
+	subsets: ["latin"],
+	variable: "--font-sans",
+});
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const inter = Inter({ subsets: ["latin"] });
+
+const queryClient = new QueryClient({});
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body className={inter.className + ' mx-12 my-6 container mx-auto bg-zinc-900 text-white'}>{children}</body>
-    </html>
-  )
+	return (
+		<html lang="en">
+			<QueryClientProvider client={queryClient}>
+				<body
+					className={cn(
+						"min-h-screen bg-background font-sans antialiased",
+						fontSans.variable,
+					)}
+				>
+					{children}
+				</body>
+			</QueryClientProvider>
+		</html>
+	);
 }
