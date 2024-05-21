@@ -1,159 +1,104 @@
 'use client'
 
-import Platform from './components/platform';
-// import Image from 'next/image'
-import PlatformResult from './components/platform-result';
-import { PlatformConfig } from './types';
+import { PlatformPercentiles } from '@/lib/metrics';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const platforms: PlatformConfig[] = [
-    {
-      name: 'Vercel',
-      targets: [{
-        url: process.env.NEXT_PUBLIC_PLATFORM_URL_VERCEL!,
-        meatadata: {}
-      }]
-    },
-    {
-      name: 'Fly',
-      targets: [{
-        url: process.env.NEXT_PUBLIC_PLATFORM_URL_FLY!,
-        meatadata: {}
-      }]
-    },
-    {
-      name: 'Cloudflare',
-      targets: [{
-        url: process.env.NEXT_PUBLIC_PLATFORM_URL_CLOUDFLARE_DEFAULT!, 
-        meatadata: {
-          Placement: 'Default'
-        }
-      }, {
-        url: process.env.NEXT_PUBLIC_PLATFORM_URL_CLOUDFLARE_SMART!,
-        meatadata: {
-          Placement: 'Smart'
-        }
-      }]
+  const [percentiles, setPercentiles] = useState<PlatformPercentiles>({})
+  const [platformNames, setPlatformNames] = useState<string[]|undefined>()
+  const [selectedPlatform, setSelectedPlatform] = useState<string|undefined>()
+  const [selectedPlatformRegion, setSelectedPlatformRegion] = useState<string|undefined>()
+  const [selectedNeonRegion, setSelectedNeonRegion] = useState<string|undefined>()
+
+  useEffect(() => {
+    async function fetchData() {
+      const json: PlatformPercentiles = await fetch('/api/benchmarks/percentiles').then(res => res.json())
+      const platformNames = Object.keys(json)
+      
+      setPercentiles(json)
+
+      setPlatformNames(platformNames)
+      onPlatformChange(platformNames[0], json)
     }
-  ];
+    fetchData()
+  }, [])
+
+  if (!platformNames || !selectedPlatform || !selectedPlatformRegion || !selectedNeonRegion) return <p>Loading...</p>
+
+  const platformSelectOptions = platformNames.map((platform, index) => (
+    <option className='capitalize' key={index} value={platform}>{platform}</option>
+  ))
+
+  // Dedeuplicate the platform regions using a Set, e.g we test from Vercel IAD1
+  // to both us-east1 and us-east2 of Neon so we the same Vercel region twice in
+  // the percentiles - once for each Neon region. We only want to show it once in
+  // the dropdown.
+  const platformRegionSelectOptions = Array.from(new Set(percentiles[selectedPlatform].map((region) => region.platformRegion))).map((region, index) => (
+    <option className='capitalize' key={index} value={region}>{region}</option>
+  ))
+
+  const neonRegionSelectOptions = percentiles[selectedPlatform].filter((entry) => entry.platformRegion === selectedPlatformRegion).map((region, index) => (
+    <option className='capitalize' key={index} value={region.neonRegion.split('.')[0]}>{region.neonRegion.split('.')[0]}</option>
+  ))
+
+  function onPlatformChange(platform: string, percentiles: PlatformPercentiles) {
+    setSelectedPlatform(platform)
+    setSelectedPlatformRegion(percentiles[platform][0].platformRegion)
+    setSelectedNeonRegion(percentiles[platform][0].neonRegion.split('.')[0])
+  }
+
+  function onRegionChange (platform: string, region: string, percentiles: PlatformPercentiles) {
+    setSelectedPlatformRegion(region)
+    const regionItem = percentiles[platform].find((entry) => entry.platformRegion === region)
+    
+    if (!regionItem) throw new Error('Could not find region item')
+
+    setSelectedNeonRegion(regionItem.neonRegion.split('.')[0])
+  }
+
+  function getPercentilesForPlatformAndRegion(platform: string, region: string, neonRegion: string) {
+    const result = percentiles[platform].find((entry) => {
+      return entry.platformRegion === region && entry.neonRegion.split('.')[0] === neonRegion
+    })?.percentiles
+
+    return Object.entries(result || {})
+  }
 
   return (
-    <div>
-      <p className='text-center'>This application sends requests to the providers listed, and those in turn issue queries against a Neon database. All of the providers issue a series of one-shot queries using the <a href='https://github.com/neondatabase/serverless#readme' className='underline text-emerald-400' target='_blank'>@neondatabase/serverless</a> driver.</p>
-      {platforms.map((platform, index) => (
-        <Platform key={index} platform={platform} />
-      ))}
-    </div>
+    <main>
+      {/* <p className='text-center'>This application sends requests to the providers listed, and those in turn issue queries against a Neon database. All of the providers issue a series of one-shot queries using the <a href='https://github.com/neondatabase/serverless#readme' className='underline text-emerald-400' target='_blank'>@neondatabase/serverless</a> driver. The code that issues the queries can be found in the <a href="https://github.com/evanshortiss/neon-query-bench" target='_blank'>neon-query-bench repository on GitHub</a>.</p> */}
+      <div className="selectors flex w-1/2 m-auto">
+        <div>
+          <label htmlFor="platform" className="block mb-2">Platform</label>
+          <select onChange={(e) => onPlatformChange(e.target.value, percentiles)} className='flex-1 dark:text-white dark:bg-gray-800 capitalize p-2' name="platform" id="platform">
+            {platformSelectOptions}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="region" className="block mb-2">Platform Region</label>
+          <select onChange={(e) => onRegionChange(selectedPlatform, e.target.value, percentiles)} className='flex-1 dark:text-white dark:bg-gray-800 uppercase p-2' name="region" id="region">
+            {platformRegionSelectOptions}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="neonRegion" className="block mb-2">Neon Region</label>
+          <select onChange={(e) => setSelectedNeonRegion(e.target.value)} className='flex-1 dark:text-white dark:bg-gray-800 uppercase p-2' name="neonRegion" id="neonRegion">
+            {neonRegionSelectOptions}
+          </select>
+        </div>
+      </div>
+
+      <div className='pt-6'>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {getPercentilesForPlatformAndRegion(selectedPlatform, selectedPlatformRegion, selectedNeonRegion).map(([key, value]) => (
+            <div key={key} className="bg-gray-800 p-4 rounded">
+              <h3 className="text-lg font-semibold">{key}</h3>
+              <p>{Math.round(value)}ms</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+    </main>
   );
-  
-
-  // return (
-  //   <main className="flex min-h-screen flex-col items-center justify-between p-24">
-  //     <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-  //       <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-  //         Get started by editing&nbsp;
-  //         <code className="font-mono font-bold">src/app/page.tsx</code>
-  //       </p>
-  //       <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-  //         <a
-  //           className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-  //           href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-  //           target="_blank"
-  //           rel="noopener noreferrer"
-  //         >
-  //           By{' '}
-  //           <Image
-  //             src="/vercel.svg"
-  //             alt="Vercel Logo"
-  //             className="dark:invert"
-  //             width={100}
-  //             height={24}
-  //             priority
-  //           />
-  //         </a>
-  //       </div>
-  //     </div>
-
-  //     <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-  //       <Image
-  //         className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-  //         src="/next.svg"
-  //         alt="Next.js Logo"
-  //         width={180}
-  //         height={37}
-  //         priority
-  //       />
-  //     </div>
-
-  //     <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-  //       <a
-  //         href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-  //         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         <h2 className={`mb-3 text-2xl font-semibold`}>
-  //           Docs{' '}
-  //           <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-  //             -&gt;
-  //           </span>
-  //         </h2>
-  //         <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-  //           Find in-depth information about Next.js features and API.
-  //         </p>
-  //       </a>
-
-  //       <a
-  //         href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-  //         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         <h2 className={`mb-3 text-2xl font-semibold`}>
-  //           Learn{' '}
-  //           <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-  //             -&gt;
-  //           </span>
-  //         </h2>
-  //         <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-  //           Learn about Next.js in an interactive course with&nbsp;quizzes!
-  //         </p>
-  //       </a>
-
-  //       <a
-  //         href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-  //         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         <h2 className={`mb-3 text-2xl font-semibold`}>
-  //           Templates{' '}
-  //           <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-  //             -&gt;
-  //           </span>
-  //         </h2>
-  //         <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-  //           Explore starter templates for Next.js.
-  //         </p>
-  //       </a>
-
-  //       <a
-  //         href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-  //         className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         <h2 className={`mb-3 text-2xl font-semibold`}>
-  //           Deploy{' '}
-  //           <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-  //             -&gt;
-  //           </span>
-  //         </h2>
-  //         <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-  //           Instantly deploy your Next.js site to a shareable URL with Vercel.
-  //         </p>
-  //       </a>
-  //     </div>
-  //   </main>
-  // )
 }
