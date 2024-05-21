@@ -14,7 +14,7 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse) {
       console.log('set api key', process.env.NQB_API_KEY)
       
       const queryRunnerResult = await runner({
-        count: 10,
+        count: 1,
         apiKey: req.headers['x-api-key'] as string|undefined
       })
 

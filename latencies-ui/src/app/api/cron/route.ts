@@ -4,6 +4,7 @@ import pino from 'pino'
 import { BenchmarkRuns, BenchmarkResults, db } from '@/lib/drizzle'
 import { randomUUID } from 'crypto'
 import secureCron from '@/lib/secure-cron'
+import PQueue from 'p-queue'
 
 export const dynamic = "force-dynamic";
 
@@ -76,40 +77,65 @@ async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>
   const controller = new AbortController()
   
   log.info(`processing endpoint ${id} with URL ${url}`)
+  
+  const q = new PQueue({ concurrency: 1, autoStart: true })
+  const results: QueryRecordPayload[] = []
 
-  const timer = setTimeout(() => {
-    controller.abort()
-  }, 10000)
-
-  try {
-    const resp = await fetch(url, {
-      signal: controller.signal,
-      headers: {
-        'x-api-key': apiKey
+  for (let i = 0; i < 10; i++) {
+    q.add(async () => {
+      const timer = setTimeout(() => {
+        controller.abort()
+      }, 10000)
+    
+      try {
+        const resp = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'x-api-key': apiKey
+          }
+        })
+    
+        clearTimeout(timer)
+    
+        if (resp.status !== 200) {
+          const text = await resp.text()
+          throw new Error(`received status code ${resp.status} from endpoint and text ${text}`)
+        } else {
+          const json = await resp.json()
+    
+          // TODO: schema validation on response
+          results.push(json)
+        }
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          throw new Error(`failed to process endpoint ${id}. exception message was "${e.message}"`)
+        } else {
+          const errorId = randomUUID()
+          log.error(`exception (${errorId}) processing ${id}:`)
+          log.error(e)
+    
+          throw new Error(`exception thrown when processing endpoint ${id}. search logs for "${errorId}" for more information`)
+        }
       }
     })
+  }
+  
+  log.info(`waiting for queued requests to finish for endpoint ${id} with URL ${url}`)
 
-    clearTimeout(timer)
+  await q.onIdle()
 
-    if (resp.status !== 200) {
-      const text = await resp.text()
-      throw new Error(`received status code ${resp.status} from endpoint and text ${text}`)
-    } else {
-      const json = await resp.json()
+  log.info(`queued requests finished for endpoint ${id} with URL ${url}`)
 
-      // TODO: schema validation on response
-      return json as QueryRecordPayload
-    }
-  } catch (e: unknown) {
-    if (e instanceof Error) {
-      throw new Error(`failed to process endpoint ${id}. exception message was "${e.message}"`)
-    } else {
-      const errorId = randomUUID()
-      log.error(`exception (${errorId}) processing ${id}:`)
-      log.error(e)
-
-      throw new Error(`exception thrown when processing endpoint ${id}. search logs for "${errorId}" for more information`)
-    }
+  return {
+    queryRunnerResult: {
+      queryTimesCold: results.map(r => r.queryRunnerResult.queryTimes[0]),
+      queryTimesHot: results.map(r => r.queryRunnerResult.queryTimes[0]),
+      queryTimes: results.map(r => r.queryRunnerResult.queryTimes[0]),
+      neonRegion: results[0].queryRunnerResult.neonRegion
+    },
+    version: results[0].version,
+    platformName: results[0].platformName,
+    platformRegion: results[0].platformRegion
   }
 }
 

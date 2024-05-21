@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   })
 
   const queryRunnerResult = await runner({
-    count: 10,
+    count: 1,
     apiKey: process.env.NQB_API_KEY
   })
 

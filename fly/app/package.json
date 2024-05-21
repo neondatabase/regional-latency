@@ -15,7 +15,7 @@
   "description": "",
   "dependencies": {
     "barelog": "^0.2.0",
-    "neon-query-bench": "^0.5.2"
+    "neon-query-bench": "^0.5.3-beta.2"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",
