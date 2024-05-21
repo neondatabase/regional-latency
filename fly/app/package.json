@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
+    "build:image": "docker build --platform linux/arm64,linux/amd64 -t evanatneon/nqb-fly .",
     "build": "tsc",
     "dev": "nodemon -r dotenv/config server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,7 +15,7 @@
   "description": "",
   "dependencies": {
     "barelog": "^0.2.0",
-    "neon-query-bench": "^0.4.1"
+    "neon-query-bench": "^0.5.2"
   },
   "devDependencies": {
     "@types/node": "^18.19.3",

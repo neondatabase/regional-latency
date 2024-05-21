@@ -43,7 +43,7 @@ async function listener(req: http.IncomingMessage, res: http.ServerResponse) {
   }
 }
 
-server.listen(3000, () => {
+server.listen(3000, '0.0.0.0', () => {
   log('Server is listening on port 3000')
 })
 

@@ -1,0 +1,26 @@
+# fly.toml app configuration file generated for nqb-lax-us-west-2 on 2024-05-16T22:37:11-07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'nqb-lax-us-west-2'
+primary_region = 'lax'
+
+[build]
+  image = 'docker.io/evanatneon/nqb-fly'
+
+[env]
+  NQB_API_KEY = 'nqbflyio'
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1
