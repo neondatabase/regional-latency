@@ -52,7 +52,8 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
             platformName: value.platformName,
             platformRegion: value.platformRegion,
             neonRegion: value.neonRegion,
-            queryTimes: value.queryTimes.map(qt => qt.end - qt.start),
+            queryTimes: value.queryTimes,
+            queryTimesHot: value.queryTimesHot,
             version: value.version,
             timestamp
           })
@@ -75,10 +76,32 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
  */
 async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
   const { id, url, apiKey } = endpoint
-  const controller = new AbortController()
   
   log.info(`processing endpoint ${id} with URL ${url}`)
   
+  const queryTimes = await runQuery(id, url, apiKey)
+  const queryTimesHot = await runQuery(id, url, apiKey)
+
+  const metadata = await getRunnerMeatadata(url)
+  
+  log.info(`fetched metadata for endpoint ${id} with URL ${url}`)
+
+  const result = {
+    queryTimes: queryTimes.map(r => r.queryTimes.map(qt => qt.end - qt.start)).flatMap(r => r),
+    queryTimesHot: queryTimesHot.map(r => r.queryTimes.map(qt => qt.end - qt.start)).flatMap(r => r),
+    version: metadata.version,
+    neonRegion: metadata.neonRegion,
+    platformName: metadata.platformName,
+    platformRegion: metadata.platformRegion
+  }
+
+  log.info(`finished processing endpoint ${id} with URL ${url}. Result is %j`, result)
+
+  return result
+}
+
+async function runQuery (id: string, url: string, apiKey: string): Promise<QueryRunnerResult[]> {
+  const controller = new AbortController()
   const q = new PQueue({ concurrency: 1, autoStart: true })
   const results: QueryRunnerResult[] = []
 
@@ -104,7 +127,7 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
           const text = await resp.text()
           throw new Error(`received status code ${resp.status} from endpoint and text ${text}`)
         } else {
-          const json = await resp.json()
+          const json = await resp.json() as QueryRunnerResult
     
           // TODO: schema validation on response
           results.push(json)
@@ -132,21 +155,7 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
 
   log.info(`queued requests finished for endpoint ${id} with URL ${url}. fetching endpoint metadata`)
 
-  const metadata = await getRunnerMeatadata(url)
-  
-  log.info(`fetched metadata for endpoint ${id} with URL ${url}`)
-
-  const result = {
-    queryTimes: results.map(r => r.queryTimes).flat(),
-    version: metadata.version,
-    neonRegion: metadata.neonRegion,
-    platformName: metadata.platformName,
-    platformRegion: metadata.platformRegion
-  }
-
-  log.info(`finished processing endpoint ${id} with URL ${url}. Result is %j`, result)
-
-  return result
+  return results
 }
 
 async function getRunnerMeatadata (url: string) {

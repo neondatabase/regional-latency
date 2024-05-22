@@ -35,6 +35,7 @@ export const BenchmarkResults = schema.table(
     neonRegion: text('neon_region').notNull(),
     timestamp: timestamp('timestamp').defaultNow().notNull(),
     queryTimes: integer('query_times').array().notNull(),
+    queryTimesHot: integer('query_times_hot').array().default([]).notNull(),
     version: text('version').notNull()
   },
   (benchmarks) => {

@@ -10,4 +10,7 @@ export type PlatformConfig = {
   targets: PlatformTarget[]
 }
 
-export type NQBResult = QueryRunnerMetadata&QueryRunnerResult
+export type NQBResult = QueryRunnerMetadata&{
+  queryTimes: number[]
+  queryTimesHot: number[]
+}
