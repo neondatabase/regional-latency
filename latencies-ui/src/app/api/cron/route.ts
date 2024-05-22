@@ -89,7 +89,9 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
       }, 10000)
     
       try {
-        const resp = await fetch(new URL('/benchmark/results', url), {
+        const benchUrl = new URL('/benchmark/results', url).toString()
+        log.info(`fetching endpoint ${id} with URL ${benchUrl}`)
+        const resp = await fetch(benchUrl, {
           signal: controller.signal,
           headers: {
             'x-api-key': apiKey
@@ -122,7 +124,10 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
   }
   
   log.info(`waiting for queued requests to finish for endpoint ${id} with URL ${url}`)
-
+  q.on('error', (e) => {
+    log.error(`error processing fetch for endpointc ${id}`)
+    log.error(e)
+  })
   await q.onIdle()
 
   log.info(`queued requests finished for endpoint ${id} with URL ${url}. fetching endpoint metadata`)
