@@ -16,7 +16,7 @@
     "barelog": "^0.2.0",
     "drizzle-orm": "^0.29.1",
     "env-var": "^7.4.1",
-    "neon-query-bench": "^0.5.3-beta.1",
+    "neon-query-bench": "^0.6.0-beta.1",
     "next": "14.0.4",
     "p-queue": "^8.0.1",
     "pino": "^8.17.2",

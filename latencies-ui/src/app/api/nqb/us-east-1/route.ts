@@ -1,10 +1,11 @@
-import getBenchmarkInstance, { QueryRecordPayload } from "neon-query-bench"
-import { NextRequest, NextResponse } from "next/server"
+import { NQBResult } from "@/src/app/types";
+import getBenchmarkInstance from "neon-query-bench"
+import { NextResponse } from "next/server"
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
-  const { runner, platform, version } = getBenchmarkInstance({
+export async function GET() {
+  const { runner, platform, version, neonRegion } = getBenchmarkInstance({
     // Required to identify this as a vercel environment
     ...process.env,
 
@@ -13,14 +14,15 @@ export async function GET(request: NextRequest) {
     NQB_API_KEY: process.env.NQB_API_KEY
   })
 
-  const queryRunnerResult = await runner({
+  const { queryTimes } = await runner({
     count: 1,
     apiKey: process.env.NQB_API_KEY
   })
 
-  const response: QueryRecordPayload = {
-    queryRunnerResult,
+  const response: NQBResult = {
+    queryTimes,
     version,
+    neonRegion,
     platformName: platform.getPlatformName(),
     platformRegion: platform.getPlatformRegion()
   }

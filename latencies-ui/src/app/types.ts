@@ -1,3 +1,5 @@
+import { QueryRunnerMetadata, QueryRunnerResult } from "neon-query-bench"
+
 export type PlatformTarget = {
   url: string
   meatadata: Record<string, string>
@@ -8,13 +10,4 @@ export type PlatformConfig = {
   targets: PlatformTarget[]
 }
 
-export type QueryBenchmarkResponse = {
-  region: string
-  data: {
-    // We don't need the result, though all fetch requests should
-    // return the same JSON response data...
-    results: any
-    queryTimes: { start: number, end: number }[]
-    neonRegion: string
-  }
-}
+export type NQBResult = QueryRunnerMetadata&QueryRunnerResult

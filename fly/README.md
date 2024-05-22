@@ -1,31 +1,6 @@
 # Fly
 
-## Local Development
-
-```bash
-cd fly
-
-# Create a .env and define a database URL
-cp .env.example .env
-vi .env
-
-npm i
-npm run dev
-```
-
-## Building a Container Image
-
-1. Install Docker or Podman.
-2. If on macOS, make sure to enable the containerd setting on Docker.
-3. Run `npm run build:image`.
-
-## Pushing a Container Image
-
-Currently, the container image should be pushed to `docker.io/evanatneon/nqb-fly`
-using `podman push` or `docker push`.
-
-
-## Deploy
+## Deployment
 
 Fly's `launch` command doesn't accept a path to a specific _.toml_ file. To
 workaround this, create a directory for each region and copy an existing

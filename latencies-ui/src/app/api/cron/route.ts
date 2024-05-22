@@ -1,16 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { QueryRecordPayload } from 'neon-query-bench'
+import { QueryRunnerResult, QueryRunnerMetadata } from 'neon-query-bench'
 import pino from 'pino'
 import { BenchmarkRuns, BenchmarkResults, db } from '@/lib/drizzle'
 import { randomUUID } from 'crypto'
 import secureCron from '@/lib/secure-cron'
 import PQueue from 'p-queue'
+import { NQBResult } from '../../types'
+import { getConfig } from '@/lib/config'
 
 export const dynamic = "force-dynamic";
 
 const log = pino({
   level: process.env.LOG_LEVEL || 'info'
 })
+
+const config = getConfig(process.env)
 
 type Endpoint = {
   id: string
@@ -47,9 +51,8 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
             run_id: id,
             platformName: value.platformName,
             platformRegion: value.platformRegion,
-            neonRegion: value.queryRunnerResult.neonRegion,
-            queryTimesCold: value.queryRunnerResult.queryTimesCold.map(qt => qt.end - qt.start),
-            queryTimesHot: value.queryRunnerResult.queryTimesHot.map(qt => qt.end - qt.start),
+            neonRegion: value.neonRegion,
+            queryTimes: value.queryTimes.map(qt => qt.end - qt.start),
             version: value.version,
             timestamp
           })
@@ -68,27 +71,25 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
 }
 
 /**
- * Reach out to the endpoint and wait up to 10 seconds for a result.
- * @param endpoint 
- * @returns {Promise<QueryRecordPayload>}
+ * Send queries in series to the endpoint and wait up to 10 seconds for a result from each.
  */
-async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>{
+async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
   const { id, url, apiKey } = endpoint
   const controller = new AbortController()
   
   log.info(`processing endpoint ${id} with URL ${url}`)
   
   const q = new PQueue({ concurrency: 1, autoStart: true })
-  const results: QueryRecordPayload[] = []
+  const results: QueryRunnerResult[] = []
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < config.BENCHMARK_QUERY_COUNT; i++) {
     q.add(async () => {
       const timer = setTimeout(() => {
         controller.abort()
       }, 10000)
     
       try {
-        const resp = await fetch(url, {
+        const resp = await fetch(new URL('/benchmark/results', url), {
           signal: controller.signal,
           headers: {
             'x-api-key': apiKey
@@ -124,19 +125,34 @@ async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>
 
   await q.onIdle()
 
-  log.info(`queued requests finished for endpoint ${id} with URL ${url}`)
+  log.info(`queued requests finished for endpoint ${id} with URL ${url}. fetching endpoint metadata`)
+
+  const metadata = await getRunnerMeatadata(url)
+  
+  log.info(`fetched metadata for endpoint ${id} with URL ${url}`)
 
   return {
-    queryRunnerResult: {
-      queryTimesCold: results.map(r => r.queryRunnerResult.queryTimes[0]),
-      queryTimesHot: results.map(r => r.queryRunnerResult.queryTimes[0]),
-      queryTimes: results.map(r => r.queryRunnerResult.queryTimes[0]),
-      neonRegion: results[0].queryRunnerResult.neonRegion
-    },
-    version: results[0].version,
-    platformName: results[0].platformName,
-    platformRegion: results[0].platformRegion
+    queryTimes: results.map(r => r.queryTimes).flat(),
+    version: metadata.version,
+    neonRegion: metadata.neonRegion,
+    platformName: metadata.platformName,
+    platformRegion: metadata.platformRegion
   }
+}
+
+async function getRunnerMeatadata (url: string) {
+  const controller = new AbortController()
+  const timer = setTimeout(() => {
+    controller.abort()
+  }, 5000)
+
+  const metadata: QueryRunnerMetadata = await fetch(new URL('/benchmark/metadata', url), {
+    signal: controller.signal
+  })
+    .then(r => r.json())
+    .finally(() => clearTimeout(timer))
+
+  return metadata
 }
 
 /**
@@ -145,15 +161,16 @@ async function processEndpoint (endpoint: Endpoint): Promise<QueryRecordPayload>
  * @returns {Endpoint[]}
  */
 function getBenchmarkEndpoints (): Endpoint[] {
+  const vercelHost = process.env.VERCEL_URL?.includes('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     
     // Run the benchmark from Vercel to Neon US East 2
-    DB_BENCH_ENDPOINT_VERCEL_US_EAST_2: new URL(`https://${process.env.VERCEL_URL}/api/nqb/us-east-2`).toString(),
+    DB_BENCH_ENDPOINT_VERCEL_US_EAST_2: new URL(`${vercelHost}/api/nqb/us-east-2`).toString(),
     DB_BENCH_APIKEY_VERCEL_US_EAST_2: process.env.NQB_API_KEY,
 
     // Run the benchmark from Vercel to Neon US East 1
-    DB_BENCH_ENDPOINT_VERCEL_US_EAST_1: new URL(`https://${process.env.VERCEL_URL}/api/nqb/us-east-1`).toString(),
+    DB_BENCH_ENDPOINT_VERCEL_US_EAST_1: new URL(`${vercelHost}/api/nqb/us-east-1`).toString(),
     DB_BENCH_APIKEY_VERCEL_US_EAST_1: process.env.NQB_API_KEY
   }
 
