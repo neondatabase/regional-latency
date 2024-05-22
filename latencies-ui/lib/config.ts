@@ -1,7 +1,6 @@
 import { from } from 'env-var'
 
 export type ApplicationConfig = {
-  API_KEY: string,
   BENCHMARK_QUERY_COUNT: number,
 }
 
