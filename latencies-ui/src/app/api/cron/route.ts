@@ -89,7 +89,7 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
       }, 10000)
     
       try {
-        const benchUrl = new URL('/benchmark/results', url).toString()
+        const benchUrl = safeConcatUrl('/benchmark/results', url)
         log.info(`fetching endpoint ${id} with URL ${benchUrl}`)
         const resp = await fetch(benchUrl, {
           signal: controller.signal,
@@ -155,13 +155,26 @@ async function getRunnerMeatadata (url: string) {
     controller.abort()
   }, 5000)
 
-  const metadata: QueryRunnerMetadata = await fetch(new URL('/benchmark/metadata', url), {
+  const metadata: QueryRunnerMetadata = await fetch(safeConcatUrl('/benchmark/metadata', url), {
     signal: controller.signal
   })
     .then(r => r.json())
     .finally(() => clearTimeout(timer))
 
   return metadata
+}
+
+
+/**
+ * Since we're kind of hacking the Vercel URLs, we need to make sure we're
+ * concatenating them correctly and not losing the /api/nqb/$REGION portion.
+ * @returns 
+ */
+function safeConcatUrl (path: string, base: string) {
+  const baseUrl = new URL(base);
+  const combinedPath = `${baseUrl.pathname.replace(/\/$/, '')}${path}`;
+
+  return new URL(combinedPath, baseUrl.origin).toString();
 }
 
 /**
