@@ -136,13 +136,17 @@ async function processEndpoint (endpoint: Endpoint): Promise<NQBResult>{
   
   log.info(`fetched metadata for endpoint ${id} with URL ${url}`)
 
-  return {
+  const result = {
     queryTimes: results.map(r => r.queryTimes).flat(),
     version: metadata.version,
     neonRegion: metadata.neonRegion,
     platformName: metadata.platformName,
     platformRegion: metadata.platformRegion
   }
+
+  log.info(`finished processing endpoint ${id} with URL ${url}. Result is %j`, result)
+
+  return result
 }
 
 async function getRunnerMeatadata (url: string) {
