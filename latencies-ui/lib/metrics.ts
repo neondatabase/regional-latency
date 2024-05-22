@@ -48,7 +48,7 @@ export async function getPercentiles (): Promise<PlatformPercentiles> {
               platform_name,
               neon_region,
               platform_region,
-              unnest(query_times_hot) AS query_time
+              unnest(query_times) AS query_time
           FROM 
               benchmarks.results
       ),
