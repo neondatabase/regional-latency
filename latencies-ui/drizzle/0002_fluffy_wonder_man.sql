@@ -1,0 +1,1 @@
+ALTER TABLE "benchmarks"."results" ADD COLUMN "query_times_hot" integer[] DEFAULT ARRAY[]::int[] NOT NULL;

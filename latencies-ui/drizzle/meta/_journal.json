@@ -15,6 +15,13 @@
       "when": 1716337916603,
       "tag": "0001_magical_frog_thor",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1716355884654,
+      "tag": "0002_fluffy_wonder_man",
+      "breakpoints": true
     }
   ]
 }

@@ -8,7 +8,7 @@ import {
   integer,
   pgSchema
 } from 'drizzle-orm/pg-core'
-import { InferSelectModel} from 'drizzle-orm'
+import { InferSelectModel, sql} from 'drizzle-orm'
 
 export const schema = pgSchema('benchmarks')
 
@@ -35,7 +35,7 @@ export const BenchmarkResults = schema.table(
     neonRegion: text('neon_region').notNull(),
     timestamp: timestamp('timestamp').defaultNow().notNull(),
     queryTimes: integer('query_times').array().notNull(),
-    queryTimesHot: integer('query_times_hot').array().default([]).notNull(),
+    queryTimesHot: integer('query_times_hot').array().notNull().default(sql`ARRAY[]::int[]`),
     version: text('version').notNull()
   },
   (benchmarks) => {
