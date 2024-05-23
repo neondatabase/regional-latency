@@ -7,7 +7,7 @@ app = 'nqb-lax-us-west-2'
 primary_region = 'lax'
 
 [build]
-  image = 'docker.io/evanatneon/nqb-fly'
+  image = 'docker.io/evanatneon/neon-query-bench'
 
 [env]
   NQB_API_KEY = 'nqbflyio'

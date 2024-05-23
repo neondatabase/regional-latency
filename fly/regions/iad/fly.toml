@@ -7,7 +7,7 @@ app = 'nqb-iad-us-east-2'
 primary_region = 'iad'
 
 [build]
-  image = 'docker.io/evanatneon/nqb-fly'
+  image = 'docker.io/evanatneon/neon-query-bench'
 
 [env]
   NQB_API_KEY = 'nqbflyio'
