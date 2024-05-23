@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 import { getPercentiles } from '@/lib/metrics';
 
 export const dynamic = "force-dynamic";

@@ -9,6 +9,7 @@ import {
 } from "./components/ui/table";
 // import { Database } from "lucide-react";
 import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
+import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 
 const neonSvg = (
   <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -106,13 +107,17 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 };
 
 export default async function Home() {
-  const data = await fetch(new URL('/api/benchmarks/percentiles', process.env.VERCEL_URL), {
-    method: "GET",
-    next: {
-      // Fetch this data every 5 minutes
-      revalidate: 5 * 60
-    }
-  }).then((res) => res.json() as Promise<PlatformPercentiles>);
+  let data: PlatformPercentiles = {}
+
+  if (process.env.NEXT_PHASE && process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) {
+    data = await fetch(new URL('/api/benchmarks/percentiles', process.env.VERCEL_URL), {
+      method: "GET",
+      next: {
+        // Fetch this data every 5 minutes
+        revalidate: 5 * 60
+      }
+    }).then((res) => res.json() as Promise<PlatformPercentiles>);
+  }
 
 	return (
 		<main>
