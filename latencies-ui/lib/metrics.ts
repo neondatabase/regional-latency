@@ -8,15 +8,6 @@ type PlatformNamesAndRegions = {
   }[]
 }
 
-type PlatformNamesAndRegionsWithPercentiles = {
-  [neonRegion: string]: {
-    platformName: string
-    platformRegion: string
-    neonRegion: string
-    percentiles: any
-  }[]
-}
-
 export type PercentileEntry = {
   platformRegion: string
   platformName: string
@@ -29,7 +20,9 @@ export type PercentileEntry = {
   }
 }
 export type PlatformPercentiles = {
-  [neonRegion: string]: PercentileEntry[]
+  [neonRegion: string]: {
+    [platformName: string]: PercentileEntry[]
+  }
 }
 type QueryResult = {
   platform_name: string
@@ -88,10 +81,14 @@ export async function getPercentiles (): Promise<PlatformPercentiles> {
     const { platform_name, platform_region, neon_region, p50, p75, p90, p99 } = row
 
     if (!result[neon_region]) {
-      result[neon_region] = []
+      result[neon_region] = {}
     }
 
-    (result[neon_region]).push({
+    if (!result[neon_region][platform_name]) {
+      result[neon_region][platform_name] = []
+    }
+
+    (result[neon_region][platform_name]).push({
       platformName: platform_name,
       platformRegion: platform_region,
       neonRegion: neon_region,

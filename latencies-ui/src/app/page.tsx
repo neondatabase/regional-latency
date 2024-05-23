@@ -7,23 +7,33 @@ import {
 	TableBody,
 	TableCell,
 } from "./components/ui/table";
-import { Database, Triangle } from "lucide-react";
+// import { Database } from "lucide-react";
+import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
 
-const neonRegions = {
-	"us-east-1.aws.neon.tech": "US East (N. Virginia)",
-	"us-east-2.aws.neon.tech": "US East (Ohio)",
-	"us-west-2.aws.neon.tech": "US West (Oregon)",
-};
+const neonSvg = (
+  <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clipPath="url(#clip0_58_44)">
+  <path fillRule="evenodd" clipRule="evenodd" d="M0 6.207C0 4.5608 0.65395 2.98203 1.81799 1.81799C2.98203 0.65395 4.5608 0 6.207 0L29.793 0C31.4392 0 33.018 0.65395 34.182 1.81799C35.346 2.98203 36 4.5608 36 6.207V26.267C36 29.813 31.512 31.352 29.336 28.553L22.531 19.799V30.414C22.531 31.8955 21.9425 33.3163 20.8949 34.3639C19.8473 35.4115 18.4265 36 16.945 36H6.207C4.5608 36 2.98203 35.346 1.81799 34.182C0.65395 33.018 0 31.4392 0 29.793L0 6.207ZM6.207 4.966C5.521 4.966 4.966 5.521 4.966 6.206V29.793C4.966 30.479 5.521 31.035 6.206 31.035H17.131C17.474 31.035 17.565 30.757 17.565 30.414V16.18C17.565 12.633 22.053 11.094 24.23 13.894L31.035 22.647V6.207C31.035 5.521 31.099 4.966 30.414 4.966H6.207Z" fill="#00E0D9"/>
+  <path fillRule="evenodd" clipRule="evenodd" d="M0 6.207C0 4.5608 0.65395 2.98203 1.81799 1.81799C2.98203 0.65395 4.5608 0 6.207 0L29.793 0C31.4392 0 33.018 0.65395 34.182 1.81799C35.346 2.98203 36 4.5608 36 6.207V26.267C36 29.813 31.512 31.352 29.336 28.553L22.531 19.799V30.414C22.531 31.8955 21.9425 33.3163 20.8949 34.3639C19.8473 35.4115 18.4265 36 16.945 36H6.207C4.5608 36 2.98203 35.346 1.81799 34.182C0.65395 33.018 0 31.4392 0 29.793L0 6.207ZM6.207 4.966C5.521 4.966 4.966 5.521 4.966 6.206V29.793C4.966 30.479 5.521 31.035 6.206 31.035H17.131C17.474 31.035 17.565 30.757 17.565 30.414V16.18C17.565 12.633 22.053 11.094 24.23 13.894L31.035 22.647V6.207C31.035 5.521 31.099 4.966 30.414 4.966H6.207Z" fill="url(#paint0_linear_58_44)"/>
+  <path fillRule="evenodd" clipRule="evenodd" d="M0 6.207C0 4.5608 0.65395 2.98203 1.81799 1.81799C2.98203 0.65395 4.5608 0 6.207 0L29.793 0C31.4392 0 33.018 0.65395 34.182 1.81799C35.346 2.98203 36 4.5608 36 6.207V26.267C36 29.813 31.512 31.352 29.336 28.553L22.531 19.799V30.414C22.531 31.8955 21.9425 33.3163 20.8949 34.3639C19.8473 35.4115 18.4265 36 16.945 36H6.207C4.5608 36 2.98203 35.346 1.81799 34.182C0.65395 33.018 0 31.4392 0 29.793L0 6.207ZM6.207 4.966C5.521 4.966 4.966 5.521 4.966 6.206V29.793C4.966 30.479 5.521 31.035 6.206 31.035H17.131C17.474 31.035 17.565 30.757 17.565 30.414V16.18C17.565 12.633 22.053 11.094 24.23 13.894L31.035 22.647V6.207C31.035 5.521 31.099 4.966 30.414 4.966H6.207Z" fill="url(#paint1_linear_58_44)" fillOpacity="0.4"/>
+  </g>
+  <defs>
+  <linearGradient id="paint0_linear_58_44" x1="36" y1="36" x2="4.345" y2="-1.3837e-06" gradientUnits="userSpaceOnUse">
+  <stop stopColor="#62F755"/>
+  <stop offset="1" stopColor="#8FF986" stopOpacity="0"/>
+  </linearGradient>
+  <linearGradient id="paint1_linear_58_44" x1="36" y1="36" x2="14.617" y2="27.683" gradientUnits="userSpaceOnUse">
+  <stop stopOpacity="0.9"/>
+  <stop offset="1" stopColor="#1A1A1A" stopOpacity="0"/>
+  </linearGradient>
+  <clipPath id="clip0_58_44">
+  <rect width="128" height="36" fill="white"/>
+  </clipPath>
+  </defs>
+  </svg>
+)
 
-const appRegions = {
-	iad: "US East (N. Virginia)",
-	iad1: "Washington D.C.",
-	lax: "Los Angeles",
-	sea: "Seattle",
-	"us-west1": "US West (Oregon)",
-};
-
-const deploymentPlatforms = {
+const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 	vercel: (
 		<svg
 			className="w-5 h-5"
@@ -40,10 +50,10 @@ const deploymentPlatforms = {
 		<svg
 			viewBox="0 0 167 151"
 			xmlns="http://www.w3.org/2000/svg"
-			fill-rule="evenodd"
-			clip-rule="evenodd"
-			stroke-linejoin="round"
-			stroke-miterlimit="2"
+			fillRule="evenodd"
+			clipRule="evenodd"
+			strokeLinejoin="round"
+			strokeMiterlimit="2"
 			className="w-5 h-5"
 		>
 			<path
@@ -67,9 +77,9 @@ const deploymentPlatforms = {
 					gradientUnits="userSpaceOnUse"
 					gradientTransform="translate(88.67 84.848) scale(120.977)"
 				>
-					<stop offset="0" stop-color="#ba7bf0" />
-					<stop offset=".45" stop-color="#996bec" />
-					<stop offset="1" stop-color="#5046e4" />
+					<stop offset="0" stopColor="#ba7bf0" />
+					<stop offset=".45" stopColor="#996bec" />
+					<stop offset="1" stopColor="#5046e4" />
 				</radialGradient>
 			</defs>
 		</svg>
@@ -96,27 +106,12 @@ const deploymentPlatforms = {
 };
 
 export default async function Home() {
-	const data = await getPercentiles();
-
-	const transformedData = Object.entries(data).reduce((acc, [key, values]) => {
-		acc[key] = values.reduce((platformAcc, item) => {
-			const { platformName } = item;
-
-			if (!platformAcc[platformName]) {
-				platformAcc[platformName] = [];
-			}
-
-			platformAcc[platformName].push(item);
-			return platformAcc;
-		}, {});
-
-		return acc;
-	}, {});
+	const transformedData = await getPercentiles();
 
 	return (
 		<main>
 			<div className="p-6 space-y-4 my-8">
-				<h2 className="font-title text-[68px] font-medium leading-[0.9] tracking-extra-tight text-white xl:text-[56px] lg:text-[44px]  sm:text-[32px] ">
+				<h2 className="font-title text-[68px] leading-[0.9] tracking-extra-tight text-white xl:text-[56px] lg:text-[44px]  sm:text-[32px] ">
 					Neon regional latency
 				</h2>
 				<p className=" text-xl leading-snug tracking-extra-tight text-[#797d86] xl:max-w-2xl xl:text-lg lg:text-base">
@@ -130,12 +125,22 @@ export default async function Home() {
 					</a>
 				</p>
 			</div>
-			<div className="flex flex-col gap-24 p-6">
-				{Object.keys(transformedData).map((region) => (
+			<div className="flex flex-col gap-12 p-6">
+				{Object.keys(transformedData).sort((a, b) => {
+          const r1 = a as NeonRegion
+          const r2 = b as NeonRegion
+          if (neonRegionSortOrder.indexOf(r1) > neonRegionSortOrder.indexOf(r2)) {
+            return 1
+          } else if (neonRegionSortOrder.indexOf(r1) < neonRegionSortOrder.indexOf(r2)) {
+            return -1
+          } else {
+            return 0
+          }
+        }).map((region) => (
 					<div className="space-y-3" key={region}>
 						<div className="flex items-center gap-2">
-							<h2 className="text-2xl font-bold">{neonRegions[region]}</h2>
-							<Database />
+							{neonSvg}
+							<h2 className="text-2xl">{neonRegionsToNames[region as NeonRegion]}</h2>
 						</div>
 						<div className="relative z-10 rounded-[14px] bg-white bg-opacity-[0.03] p-1.5 backdrop-blur-[4px] xl:rounded-xl md:p-1">
 							<div
@@ -173,7 +178,8 @@ export default async function Home() {
 													(entry, index) => (
 														<TableRow key={index}>
 															<TableCell>
-																{appRegions[entry.platformRegion]}
+                                {/* Use mapping, or show the raw region ID if no mapping is found */}
+																{platformRegionsToNames[entry.platformName as PlatformName][entry.platformRegion] || entry.platformRegion}
 															</TableCell>
 															<TableCell>
 																{Math.trunc(Number(entry.percentiles.p50))} ms
