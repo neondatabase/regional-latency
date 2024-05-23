@@ -3,7 +3,7 @@ import { IBM_Plex_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
-export const sans = IBM_Plex_Sans({
+const sans = IBM_Plex_Sans({
   display: 'swap',
   variable: '--font-sans',
   subsets: ['latin'],
