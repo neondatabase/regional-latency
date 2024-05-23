@@ -24,7 +24,8 @@ export const platformRegionsToNames: PlatformRegionsNamesMap = {
     iad1: "Washington D.C.",
   },
   'railway': {
-    "us-west1": "US West (Oregon)",
+    "us-west1": "US West (Oregon, USA)",
+    'us-east4': 'US East (Virginia, USA)'
   },
   'fly': {
     bos: 'Boston',

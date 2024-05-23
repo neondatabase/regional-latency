@@ -1,4 +1,4 @@
-import { getPercentiles } from "@/lib/metrics";
+import { PlatformPercentiles, getPercentiles } from "@/lib/metrics";
 import {
 	Table,
 	TableHeader,
@@ -106,7 +106,13 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 };
 
 export default async function Home() {
-	const transformedData = await getPercentiles();
+  const data = await fetch(new URL('/api/benchmarks/percentiles', process.env.VERCEL_URL), {
+    method: "GET",
+    next: {
+      // Fetch this data every 5 minutes
+      revalidate: 5 * 60
+    }
+  }).then((res) => res.json() as Promise<PlatformPercentiles>);
 
 	return (
 		<main>
@@ -126,7 +132,7 @@ export default async function Home() {
 				</p>
 			</div>
 			<div className="flex flex-col gap-12 p-6">
-				{Object.keys(transformedData).sort((a, b) => {
+				{Object.keys(data).sort((a, b) => {
           const r1 = a as NeonRegion
           const r2 = b as NeonRegion
           if (neonRegionSortOrder.indexOf(r1) > neonRegionSortOrder.indexOf(r2)) {
@@ -152,7 +158,7 @@ export default async function Home() {
 								aria-hidden="true"
 							/>
 							<div className="relative z-20 w-full flex flex-col rounded-[10px] border-opacity-[0.05] bg-[#0c0d0d] xl:rounded-lg gap-5 px-4 py-4 ">
-								{Object.keys(transformedData[region]).map((platform) => (
+								{Object.keys(data[region]).map((platform) => (
 									<div
 										key={platform}
 										className="relative w-full  z-10 rounded-[14px] p-4  backdrop-blur-[4px] xl:rounded-xl space-y-3"
@@ -169,28 +175,30 @@ export default async function Home() {
 													<TableHeader>Deployed App region</TableHeader>
 													<TableHeader>P50</TableHeader>
 													<TableHeader>P75</TableHeader>
-													<TableHeader>P90</TableHeader>
+													<TableHeader>P95</TableHeader>
 													<TableHeader>P99</TableHeader>
 												</TableRow>
 											</TableHead>
 											<TableBody>
-												{transformedData[region][platform].map(
+												{data[region][platform].map(
 													(entry, index) => (
 														<TableRow key={index}>
-															<TableCell>
+															<TableCell className="w-1/4 pr-5">
                                 {/* Use mapping, or show the raw region ID if no mapping is found */}
 																{platformRegionsToNames[entry.platformName as PlatformName][entry.platformRegion] || entry.platformRegion}
+                                <br />
+                                <small className="text-zinc-500 dark:text-zinc-400">Last updated at {new Date(entry.timestamp).toLocaleString()}</small>
 															</TableCell>
-															<TableCell>
+															<TableCell className="w-1/5">
 																{Math.trunc(Number(entry.percentiles.p50))} ms
 															</TableCell>
-															<TableCell>
+															<TableCell className="w-1/5">
 																{Math.trunc(Number(entry.percentiles.p75))} ms
 															</TableCell>
-															<TableCell>
-																{Math.trunc(Number(entry.percentiles.p90))} ms
+															<TableCell className="w-1/5">
+																{Math.trunc(Number(entry.percentiles.p95))} ms
 															</TableCell>
-															<TableCell>
+															<TableCell className="w-1/5">
 																{Math.trunc(Number(entry.percentiles.p99))} ms
 															</TableCell>
 														</TableRow>
