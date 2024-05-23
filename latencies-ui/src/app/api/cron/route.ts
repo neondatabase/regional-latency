@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
     const endpoints = getBenchmarkEndpoints()
     const results = await Promise.allSettled(endpoints.map(e => processEndpoint(e)))
   
-    log.info('finished procesing all endpoints. updating database with results')
+    log.info('finished procesing all endpoints. updating database with results: %j', results)
 
     await db.transaction(async (tx) => {
       // Create an entry for this specific test run
@@ -58,6 +58,7 @@ export async function GET(req: NextRequest, res: NextRequest): Promise<NextRespo
             timestamp
           })
         } else {
+          log.error('error processing endpoint:')
           log.error((r.reason as Error).message)
         }
       }
