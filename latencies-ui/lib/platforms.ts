@@ -27,6 +27,7 @@ export const platformRegionsToNames: PlatformRegionsNamesMap = {
     "us-west1": "US West (Oregon)",
   },
   'fly': {
+    bos: 'Boston',
     iad: "Ashburn, Virginia (US)",
     lax: "Los Angeles",
     sea: "Seattle",
