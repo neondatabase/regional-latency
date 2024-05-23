@@ -16,6 +16,7 @@
     "barelog": "^0.2.0",
     "drizzle-orm": "^0.29.1",
     "env-var": "^7.4.1",
+    "lucide-react": "^0.379.0",
     "neon-query-bench": "^0.6.0-beta.2",
     "next": "14.0.4",
     "p-queue": "^8.0.1",
