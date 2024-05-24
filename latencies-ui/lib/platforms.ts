@@ -18,7 +18,7 @@ export const neonRegionSortOrder: NeonRegion[] = [
 ]
 
 export const platformNames: PlatformName[] = ['vercel', 'railway', 'fly', 'digitalocean']
-export const platformNamesFormatted: { [key: PlatformName]: string } = {
+export const platformNamesFormatted: { [key in PlatformName]: string } = {
   'vercel': 'Vercel',
   'railway': 'Railway',
   'fly': 'Fly',
