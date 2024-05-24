@@ -8,8 +8,6 @@ import {
 	TableCell,
 } from "./components/ui/table";
 import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
-import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
-import { log } from "@/lib/log";
 
 const neonSvg = (
   <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -109,18 +107,7 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 export const revalidate = 5 * 60
 
 export default async function Home() {
-  let data: PlatformPercentiles = {}
-  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    log.info('Fetching results from db and rerendering page at build time.')
-    data = await getPercentiles()
-  } else {
-    log.info('Fetching latest results and rerendering page.')
-    const host = process.env.VERCEL_URL?.startsWith('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
-    const url = new URL('/api/benchmarks/percentiles', host)
-    data = await fetch(url, {
-      cache: 'no-store'
-    }).then(r => r.json())
-  }
+  let data: PlatformPercentiles = await getPercentiles()
 
 	return (
 		<main>
@@ -195,7 +182,7 @@ export default async function Home() {
                                 {/* Use mapping, or show the raw region ID if no mapping is found */}
 																{platformRegionsToNames[entry.platformName as PlatformName][entry.platformRegion] || entry.platformRegion}
                                 <br />
-                                <small className="text-zinc-500 dark:text-zinc-400">Last updated at {new Date(entry.timestamp).toLocaleString()}</small>
+                                <small className="text-zinc-500 dark:text-zinc-400">Last updated at {entry.timestamp}</small>
 															</TableCell>
 															<TableCell className="w-1/5">
 																{Math.trunc(Number(entry.percentiles.p50))} ms
