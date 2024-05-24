@@ -7,7 +7,7 @@ import {
 	TableBody,
 	TableCell,
 } from "./components/ui/table";
-import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
+import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformNames, platformRegionsToNames } from "@/lib/platforms";
 
 const neonSvg = (
   <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -153,56 +153,59 @@ export default async function Home() {
 								aria-hidden="true"
 							/>
 							<div className="relative z-20 w-full flex flex-col rounded-[10px] border-opacity-[0.05] bg-[#0c0d0d] xl:rounded-lg gap-5 px-4 py-4 ">
-								{Object.keys(data[region]).map((platform) => (
-									<div
-										key={platform}
-										className="relative w-full  z-10 rounded-[14px] p-4  backdrop-blur-[4px] xl:rounded-xl space-y-3"
-									>
-										<div className="flex space-x-2 items-center">
-											{deploymentPlatforms[platform]}
-											<h3 className="capitalize text-xl font-semibold">
-												{platform}
-											</h3>
-										</div>
-										<Table>
-											<TableHead>
-												<TableRow>
-													<TableHeader>Deployed App region</TableHeader>
-													<TableHeader>P50</TableHeader>
-													<TableHeader>P75</TableHeader>
-													<TableHeader>P95</TableHeader>
-													<TableHeader>P99</TableHeader>
-												</TableRow>
-											</TableHead>
-											<TableBody>
-												{data[region][platform].map(
-													(entry, index) => (
-														<TableRow key={index}>
-															<TableCell className="w-1/4 pr-5">
-                                {/* Use mapping, or show the raw region ID if no mapping is found */}
-																{platformRegionsToNames[entry.platformName as PlatformName][entry.platformRegion] || entry.platformRegion}
-                                <br />
-                                <small className="text-zinc-500 dark:text-zinc-400">Last updated at {entry.timestamp}</small>
-															</TableCell>
-															<TableCell className="w-1/5">
-																{Math.trunc(Number(entry.percentiles.p50))} ms
-															</TableCell>
-															<TableCell className="w-1/5">
-																{Math.trunc(Number(entry.percentiles.p75))} ms
-															</TableCell>
-															<TableCell className="w-1/5">
-																{Math.trunc(Number(entry.percentiles.p95))} ms
-															</TableCell>
-															<TableCell className="w-1/5">
-																{Math.trunc(Number(entry.percentiles.p99))} ms
-															</TableCell>
-														</TableRow>
-													),
-												)}
-											</TableBody>
-										</Table>
-									</div>
-								))}
+                {/* Filter is used to prevent new platform additions from breaking the UI */}
+								{Object.keys(data[region]).filter(platform => platformNames.indexOf(platform as PlatformName) !== -1).map((platform) => {
+                  return (
+                    <div
+                      key={platform}
+                      className="relative w-full  z-10 rounded-[14px] p-4  backdrop-blur-[4px] xl:rounded-xl space-y-3"
+                    >
+                      <div className="flex space-x-2 items-center">
+                        {deploymentPlatforms[platform]}
+                        <h3 className="capitalize text-xl font-semibold">
+                          {platform}
+                        </h3>
+                      </div>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableHeader>Deployed App region</TableHeader>
+                            <TableHeader>P50</TableHeader>
+                            <TableHeader>P75</TableHeader>
+                            <TableHeader>P95</TableHeader>
+                            <TableHeader>P99</TableHeader>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {data[region][platform].map(
+                            (entry, index) => (
+                              <TableRow key={index}>
+                                <TableCell className="w-1/4 pr-5">
+                                  {/* Use mapping, or show the raw region ID if no mapping is found */}
+                                  {platformRegionsToNames[entry.platformName as PlatformName][entry.platformRegion] || entry.platformRegion}
+                                  <br />
+                                  <small className="text-zinc-500 dark:text-zinc-400">Last updated at {entry.timestamp}</small>
+                                </TableCell>
+                                <TableCell className="w-1/5">
+                                  {Math.trunc(Number(entry.percentiles.p50))} ms
+                                </TableCell>
+                                <TableCell className="w-1/5">
+                                  {Math.trunc(Number(entry.percentiles.p75))} ms
+                                </TableCell>
+                                <TableCell className="w-1/5">
+                                  {Math.trunc(Number(entry.percentiles.p95))} ms
+                                </TableCell>
+                                <TableCell className="w-1/5">
+                                  {Math.trunc(Number(entry.percentiles.p99))} ms
+                                </TableCell>
+                              </TableRow>
+                            ),
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  );
+                })}
 							</div>
 						</div>
 					</div>
