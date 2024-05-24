@@ -104,20 +104,22 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 		</svg>
 	),
 };
-
+export const revalidate = 10
 export default async function Home() {
-  const host = process.env.NEXT_PUBLIC_VERCEL_URL?.startsWith('localhost') ? `http://${process.env.NEXT_PUBLIC_VERCEL_URL}` : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
-  console.log('host', host)
-  const url = new URL('/api/benchmarks/percentiles', host)
-  const data: PlatformPercentiles = await fetch(url, {
-    next: {
-      revalidate: 5 * 60
-    }
-  }).then(async (r) => {
-    console.log('status', r.status)
-    console.log('text', await r.text())
-    return r.json()
-  })
+  let data: PlatformPercentiles = {}
+  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+    console.log('get percentiles without fetch')
+    data = await getPercentiles()
+  } else {
+    console.log('fetch', new Date())
+    const host = process.env.VERCEL_URL?.startsWith('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
+    const url = new URL('/api/benchmarks/percentiles', host)
+    data = await fetch(url, {
+      next: {
+        revalidate: 5 * 60
+      }
+    }).then(r => r.json())
+  }
 
 	return (
 		<main>
