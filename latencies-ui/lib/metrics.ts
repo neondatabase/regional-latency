@@ -99,7 +99,6 @@ export async function getPercentiles (): Promise<PlatformPercentiles> {
   `)
 
   const results = queryResult.rows.reduce((result, row) => {
-    console.log(row)
     const { platform_name, platform_region, neon_region, timestamp, p50, p75, p95, p99 } = row
 
     if (!result[neon_region]) {

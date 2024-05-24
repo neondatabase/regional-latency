@@ -7,7 +7,6 @@ import {
 	TableBody,
 	TableCell,
 } from "./components/ui/table";
-// import { Database } from "lucide-react";
 import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
 import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
 
@@ -107,17 +106,13 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 };
 
 export default async function Home() {
-  let data: PlatformPercentiles = {}
-
-  if (process.env.NEXT_PHASE && process.env.NEXT_PHASE !== PHASE_PRODUCTION_BUILD) {
-    data = await fetch(new URL('/api/benchmarks/percentiles', process.env.VERCEL_URL), {
-      method: "GET",
-      next: {
-        // Fetch this data every 5 minutes
-        revalidate: 5 * 60
-      }
-    }).then((res) => res.json() as Promise<PlatformPercentiles>);
-  }
+  const host = process.env.VERCEL_URL?.startsWith('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
+  const url = new URL('/api/benchmarks/percentiles', host)
+  const data: PlatformPercentiles = await fetch(url, {
+    next: {
+      revalidate: 5 * 60
+    }
+  }).then(r => r.json())
 
 	return (
 		<main>
