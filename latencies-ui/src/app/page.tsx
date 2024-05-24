@@ -9,6 +9,7 @@ import {
 } from "./components/ui/table";
 import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformRegionsToNames } from "@/lib/platforms";
 import { PHASE_PRODUCTION_BUILD } from "next/dist/shared/lib/constants";
+import { log } from "@/lib/log";
 
 const neonSvg = (
   <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -105,18 +106,21 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 	),
 };
 
+export const revalidate = 5 * 60
+
 export default async function Home() {
   let data: PlatformPercentiles = {}
   if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
-    console.log('get percentiles without fetch')
+    log.info('Fetching results from db and rerendering page at build time.')
     data = await getPercentiles()
   } else {
-    console.log('fetch', new Date())
+    log.info('Fetching latest results and rerendering page.')
     const host = process.env.VERCEL_URL?.startsWith('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
     const url = new URL('/api/benchmarks/percentiles', host)
     data = await fetch(url, {
+      cache: 'no-store',
       next: {
-        revalidate: 5 * 60
+        revalidate: 0
       }
     }).then(r => r.json())
   }
