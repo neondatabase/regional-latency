@@ -104,7 +104,7 @@ const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
 		</svg>
 	),
 };
-export const revalidate = 10
+
 export default async function Home() {
   let data: PlatformPercentiles = {}
   if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
