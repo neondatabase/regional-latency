@@ -1,5 +1,5 @@
 
-export type PlatformName = 'vercel' | 'railway' | 'fly'
+export type PlatformName = 'vercel' | 'railway' | 'fly' | 'digitalocean'
 export type PlatformRegionsNamesMap = {
   [platformName in PlatformName]: {
     [platformRegion: string]: string
@@ -17,7 +17,13 @@ export const neonRegionSortOrder: NeonRegion[] = [
   'us-east-2.aws.neon.tech',
 ]
 
-export const platformNames: PlatformName[] = ['vercel', 'railway', 'fly']
+export const platformNames: PlatformName[] = ['vercel', 'railway', 'fly', 'digitalocean']
+export const platformNamesFormatted: { [key: PlatformName]: string } = {
+  'vercel': 'Vercel',
+  'railway': 'Railway',
+  'fly': 'Fly',
+  'digitalocean': 'DigitalOcean'
+}
 
 export const platformRegionsToNames: PlatformRegionsNamesMap = {
   'vercel': {
@@ -33,6 +39,9 @@ export const platformRegionsToNames: PlatformRegionsNamesMap = {
     lax: "Los Angeles",
     sea: "Seattle",
   },
+  'digitalocean': {
+    nyc: "New York City (New York, USA)",
+  }
 }
 
 export const neonRegionsToNames: NeonRegionsNamesMap = {

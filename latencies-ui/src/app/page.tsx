@@ -7,7 +7,7 @@ import {
 	TableBody,
 	TableCell,
 } from "./components/ui/table";
-import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformNames, platformRegionsToNames } from "@/lib/platforms";
+import { NeonRegion, PlatformName, neonRegionSortOrder, neonRegionsToNames, platformNames, platformNamesFormatted, platformRegionsToNames } from "@/lib/platforms";
 
 const neonSvg = (
   <svg width="36" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -33,6 +33,12 @@ const neonSvg = (
 )
 
 const deploymentPlatforms: {[platformName: string]: JSX.Element} = {
+  digitalocean: (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="65.2 173.5 32 32" width="22" height="22" fill="#0080ff">
+      <path d="M81.202 205.5v-6.2c6.568 0 11.666-6.5 9.144-13.418a9.27 9.27 0 0 0-5.533-5.531c-6.912-2.502-13.425 2.575-13.425 9.14H65.2c0-10.463 10.124-18.622 21.1-15.195 4.8 1.505 8.618 5.313 10.105 10.1 3.43 10.99-4.717 21.107-15.203 21.107z"/>
+      <path d="M75.05 199.317v-6.165h6.168v6.165zm-4.753 4.75v-4.75h4.753v4.75h-4.753zm0-4.75h-3.973v-3.97h3.973v3.97z"/>
+    </svg>
+  ),
 	vercel: (
 		<svg
 			className="w-5 h-5"
@@ -163,7 +169,7 @@ export default async function Home() {
                       <div className="flex space-x-2 items-center">
                         {deploymentPlatforms[platform]}
                         <h3 className="capitalize text-xl font-semibold">
-                          {platform}
+                          {platformNamesFormatted[platform as PlatformName]}
                         </h3>
                       </div>
                       <Table>

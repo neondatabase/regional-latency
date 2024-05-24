@@ -1,4 +1,4 @@
-import { QueryRunnerMetadata, QueryRunnerResult } from "neon-query-bench"
+import { QueryRunnerMetadata } from "neon-query-bench"
 
 export type PlatformTarget = {
   url: string
