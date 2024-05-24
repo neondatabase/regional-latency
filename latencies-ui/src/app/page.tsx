@@ -113,7 +113,11 @@ export default async function Home() {
     next: {
       revalidate: 5 * 60
     }
-  }).then(r => r.json())
+  }).then(async (r) => {
+    console.log('status', r.status)
+    console.log('text', await r.text())
+    return r.json()
+  })
 
 	return (
 		<main>
