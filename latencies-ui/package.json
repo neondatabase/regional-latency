@@ -12,8 +12,11 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.3",
+    "@radix-ui/react-accordion": "^1.1.2",
     "@tremor/react": "^3.17.2",
     "barelog": "^0.2.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.1",
     "drizzle-orm": "^0.29.1",
     "env-var": "^7.4.1",
     "lucide-react": "^0.379.0",
@@ -22,7 +25,10 @@
     "p-queue": "^8.0.1",
     "pino": "^8.17.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "recharts": "^2.12.7",
+    "tailwind-merge": "^2.3.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",

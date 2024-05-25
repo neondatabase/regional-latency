@@ -27,17 +27,18 @@ export const platformNamesFormatted: { [key in PlatformName]: string } = {
 
 export const platformRegionsToNames: PlatformRegionsNamesMap = {
   'vercel': {
-    iad1: "Washington D.C.",
+    iad1: "Washington, D.C., USA",
+    pdx1: 'Portland, USA'
   },
   'railway': {
     "us-west1": "US West (Oregon, USA)",
     'us-east4': 'US East (Virginia, USA)'
   },
   'fly': {
-    bos: 'Boston',
+    bos: 'Boston, Massachusetts (US)',
     iad: "Ashburn, Virginia (US)",
-    lax: "Los Angeles",
-    sea: "Seattle",
+    lax: "Los Angeles, California (US)",
+    sea: "Seattle, Washington (US)",
   },
   'digitalocean': {
     nyc: "New York City (New York, USA)",

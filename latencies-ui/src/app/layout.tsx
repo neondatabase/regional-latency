@@ -24,7 +24,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.className} ${sans.className} my-6 container mx-auto bg-black text-white`}
+				className={`${inter.className} ${sans.className} my-6 sm:px-6 container mx-auto bg-black text-white`}
 			>
 				{children}
 			</body>

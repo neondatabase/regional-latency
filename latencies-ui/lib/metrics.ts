@@ -1,13 +1,6 @@
 import { gte, sql } from "drizzle-orm"
 import { BenchmarkResults, db } from "./drizzle"
 
-type PlatformNamesAndRegions = {
-  [platformName: string]: {
-    platformRegion: string
-    neonRegion: string
-  }[]
-}
-
 export type PercentileEntry = {
   platformRegion: string
   platformName: string
@@ -18,14 +11,22 @@ export type PercentileEntry = {
     p75: number
     p95: number
     p99: number
-  }
+  },
+  minTimes: number[]
+  maxTimes: number[]
+  resultTimestamps: string[]
 }
-export type PlatformPercentiles = {
+export type ResultSet = {
   [neonRegion: string]: {
     [platformName: string]: PercentileEntry[]
   }
 }
-type QueryResult = {
+
+export type NewResultSet = {
+  [neonRegion: string]: PercentileEntry[]
+}
+
+type PercentilesQueryResult = {
   platform_name: string
   neon_region: string
   platform_region: string
@@ -36,9 +37,74 @@ type QueryResult = {
   p50: number
 }
 
-export async function getPercentiles (): Promise<PlatformPercentiles> {
-    const queryResult = await db.execute<QueryResult>(sql`
-      WITH unnested AS (
+type MinMaxTimesQueryResult = {
+  neon_region: string
+  platform_region: string
+  platform_name: string
+  min_query_times: number[]
+  max_query_times: number[]
+  result_timestamps: string[]
+}
+
+export async function getPercentiles (): Promise<NewResultSet> {
+  const minMaxLatenciesQueryResult = await db.execute<MinMaxTimesQueryResult>(sql`
+    WITH recent_runs AS (
+      SELECT id, timestamp
+      FROM benchmarks.runs
+      WHERE timestamp >= NOW() - INTERVAL '12 hours'
+    ),
+    unnested_results AS (
+        SELECT 
+            r.run_id,
+            r.neon_region,
+            r.platform_region,
+            r.platform_name,
+            unnest(r.query_times_hot) AS query_time,
+            r.timestamp
+        FROM
+            benchmarks.results r
+        JOIN
+            recent_runs rr ON r.run_id = rr.id
+    ),
+    min_max_per_result AS (
+        SELECT 
+            run_id,
+            neon_region,
+            platform_region,
+            platform_name,
+            timestamp,
+            MIN(query_time) AS min_query_time,
+            MAX(query_time) AS max_query_time
+        FROM
+            unnested_results
+        GROUP BY 
+            run_id,
+            neon_region,
+            platform_region,
+            platform_name,
+            timestamp
+    )
+    SELECT 
+        neon_region,
+        platform_region,
+        platform_name,
+        ARRAY_AGG(min_query_time) AS min_query_times,
+        ARRAY_AGG(max_query_time) AS max_query_times,
+        ARRAY_AGG(timestamp) AS result_timestamps
+    FROM 
+        min_max_per_result
+    GROUP BY 
+        neon_region,
+        platform_region,
+        platform_name
+    ORDER BY 
+        neon_region,
+        platform_region,
+        platform_name;
+  `)
+
+  const percentilesQueryResult = await db.execute<PercentilesQueryResult>(sql`
+    WITH unnested AS (
         SELECT 
             platform_name,
             neon_region,
@@ -98,59 +164,62 @@ export async function getPercentiles (): Promise<PlatformPercentiles> {
         p.platform_region;
   `)
 
-  const results = queryResult.rows.reduce((result, row) => {
+  const results = percentilesQueryResult.rows.reduce((result, row) => {
     const { platform_name, platform_region, neon_region, timestamp, p50, p75, p95, p99 } = row
+    const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
+      return minMaxRow.neon_region === neon_region && minMaxRow.platform_region === platform_region && minMaxRow.platform_name === platform_name
+    })
 
     if (!result[neon_region]) {
-      result[neon_region] = {}
+      result[neon_region] = []
     }
-
-    if (!result[neon_region][platform_name]) {
-      result[neon_region][platform_name] = []
-    }
-
-    (result[neon_region][platform_name]).push({
-      platformName: platform_name,
-      platformRegion: platform_region,
-      neonRegion: neon_region,
-      timestamp,
+    
+    result[neon_region].push({
       percentiles: {
         p50,
         p75,
         p95,
         p99
-      }
+      },
+      platformName: platform_name,
+      neonRegion: neon_region,
+      platformRegion: platform_region,
+      timestamp,
+      minTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times : [],
+      maxTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.max_query_times : [],
+      resultTimestamps: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.result_timestamps : []
     })
+    // if (!result[neon_region]) {
+    //   result[neon_region] = {}
+    // }
+
+    // if (!result[neon_region][platform_name]) {
+    //   result[neon_region][platform_name] = []
+    // }
+
+    // const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
+    //   return minMaxRow.neon_region === neon_region && minMaxRow.platform_region === platform_region && minMaxRow.platform_name === platform_name
+    // })
+
+
+    // result[neon_region][platform_name].push({
+    //   platformName: platform_name,
+    //   platformRegion: platform_region,
+    //   neonRegion: neon_region,
+    //   timestamp,
+    //   percentiles: {
+    //     p50,
+    //     p75,
+    //     p95,
+    //     p99
+    //   },
+    //   minTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times : [],
+    //   maxTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.max_query_times : [],
+    //   resultTimestamps: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.result_timestamps : []
+    // })
 
     return result
-  }, {} as PlatformPercentiles)
-
-  return results as PlatformPercentiles
-}
-
-async function getPlatformNamesAndRegions (): Promise<PlatformNamesAndRegions> {
-  const ts = new Date()
-  
-  ts.setHours(ts.getHours() - 24)
-
-  const platformsAndRegionsQuery = await db.select({
-    platformName: BenchmarkResults.platformName,
-    platformRegion: BenchmarkResults.platformRegion,
-    neonRegion: BenchmarkResults.neonRegion
-  })
-    .from(BenchmarkResults)
-    .where(gte(BenchmarkResults.timestamp, ts))
-    .groupBy(BenchmarkResults.platformName, BenchmarkResults.platformRegion, BenchmarkResults.neonRegion)
-
-  return platformsAndRegionsQuery.reduce((result, row) => {
-    const { neonRegion, platformRegion, platformName } = row
-
-    if (!result[platformName]) {
-      result[platformName] = []
-    }
-    
-    result[platformName].push({ platformRegion, neonRegion })
-
-    return result
-  }, {} as PlatformNamesAndRegions)
+  }, {} as NewResultSet)
+  console.log(results)
+  return results
 }
