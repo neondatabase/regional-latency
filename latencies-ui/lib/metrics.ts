@@ -220,6 +220,6 @@ export async function getPercentiles (): Promise<NewResultSet> {
 
     return result
   }, {} as NewResultSet)
-  console.log(results)
+
   return results
 }
