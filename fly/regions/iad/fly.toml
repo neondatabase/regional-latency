@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for nqb-iad-us-east-2 on 2024-05-16T22:32:52-07:00
+# fly.toml app configuration file generated for nqb-iad-us-east-1 on 2024-05-28T13:12:58-07:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'nqb-iad-us-east-2'
+app = 'nqb-iad-us-east-1'
 primary_region = 'iad'
 
 [build]
