@@ -1,7 +1,8 @@
 {
   "name": "nqb-vercel",
   "version": "1.0.0",
-  "description": "",
+  "description": "Runner for neon-query-bench onn Vercel",
+  "private": true,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
