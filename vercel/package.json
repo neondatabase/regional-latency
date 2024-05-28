@@ -1,0 +1,20 @@
+{
+  "name": "nqb-vercel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Evan Shortiss",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^18.19.33",
+    "@vercel/node": "^3.1.5",
+    "typescript": "^5.4.5",
+    "vercel": "^34.2.3"
+  },
+  "dependencies": {
+    "neon-query-bench": "^0.6.1"
+  }
+}

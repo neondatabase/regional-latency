@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/benchmark/:path*",
+      "destination": "/api/benchmark/:path*"
+    }
+  ]
+}
