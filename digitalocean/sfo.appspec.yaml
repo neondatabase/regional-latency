@@ -1,0 +1,35 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+envs:
+- key: NQB_API_KEY
+  scope: RUN_AND_BUILD_TIME
+  value: replace-me
+- key: NQB_DATABASE_URL
+  scope: RUN_AND_BUILD_TIME
+  type: SECRET
+  value: replace-me
+- key: NQB_DO_REGION
+  value: sfo
+  scope: RUN_AND_BUILD_TIME
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: nqb-sfo-us-west-2
+    match:
+      path:
+        prefix: /
+name: nqb-sfo-us-west-2
+region: sfo
+services:
+- http_port: 3000
+  image:
+    registry: evanatneon
+    registry_type: DOCKER_HUB
+    repository: neon-query-bench
+    tag: latest
+  instance_count: 1
+  instance_size_slug: apps-s-1vcpu-1gb
+  name: nqb-sfo-us-west-2
