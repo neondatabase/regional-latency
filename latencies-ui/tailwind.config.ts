@@ -11,6 +11,12 @@ const config = {
   ],
   prefix: "",
   theme: {
+    colors: {
+      neon: {
+        DEFAULT: '#00E699'
+      },
+      ...require("tailwindcss/colors"),
+    },
     container: {
       center: true,
       // padding: "2rem",

@@ -7,10 +7,10 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 
 export default class MinMaxChart extends PureComponent<{ data: PercentileEntry }> {
   render() {
-    const data = this.props.data.resultTimestamps.map((timestamp, idx) => ({
-      Timestamp: new Date(timestamp).toLocaleString(),
-      'Max Latency': this.props.data.maxTimes[idx],
-      'Min Latency': this.props.data.minTimes[idx]
+    const data = this.props.data.minMaxLatencies.map((t, idx) => ({
+      Timestamp: new Date(t.timestamp).toLocaleString(),
+      'Max Latency': this.props.data.minMaxLatencies[idx].max,
+      'Min Latency': this.props.data.minMaxLatencies[idx].min
     }))
     return (
       <ResponsiveContainer width="100%" height="100%">

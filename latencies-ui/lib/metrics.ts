@@ -1,5 +1,6 @@
-import { gte, sql } from "drizzle-orm"
-import { BenchmarkResults, db } from "./drizzle"
+import { sql } from "drizzle-orm"
+import { db } from "./drizzle"
+import { log } from "./log"
 
 export type PercentileEntry = {
   platformRegion: string
@@ -12,9 +13,11 @@ export type PercentileEntry = {
     p95: number
     p99: number
   },
-  minTimes: number[]
-  maxTimes: number[]
-  resultTimestamps: string[]
+  minMaxLatencies: {
+    min: number
+    max: number
+    timestamp: string
+  }[]
 }
 export type ResultSet = {
   [neonRegion: string]: {
@@ -185,38 +188,16 @@ export async function getPercentiles (): Promise<NewResultSet> {
       neonRegion: neon_region,
       platformRegion: platform_region,
       timestamp,
-      minTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times : [],
-      maxTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.max_query_times : [],
-      resultTimestamps: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.result_timestamps : []
+      minMaxLatencies: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times.map((min, index) => {
+        return {
+          min,
+          max: correspondingMinMaxLatencyRow.max_query_times[index],
+          timestamp: correspondingMinMaxLatencyRow.result_timestamps[index]
+        }
+      }).sort((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1) : []
     })
-    // if (!result[neon_region]) {
-    //   result[neon_region] = {}
-    // }
 
-    // if (!result[neon_region][platform_name]) {
-    //   result[neon_region][platform_name] = []
-    // }
-
-    // const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
-    //   return minMaxRow.neon_region === neon_region && minMaxRow.platform_region === platform_region && minMaxRow.platform_name === platform_name
-    // })
-
-
-    // result[neon_region][platform_name].push({
-    //   platformName: platform_name,
-    //   platformRegion: platform_region,
-    //   neonRegion: neon_region,
-    //   timestamp,
-    //   percentiles: {
-    //     p50,
-    //     p75,
-    //     p95,
-    //     p99
-    //   },
-    //   minTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times : [],
-    //   maxTimes: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.max_query_times : [],
-    //   resultTimestamps: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.result_timestamps : []
-    // })
+    log.debug('metrics data: %j', result)
 
     return result
   }, {} as NewResultSet)

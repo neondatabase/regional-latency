@@ -7,7 +7,7 @@ const sans = IBM_Plex_Sans({
   display: 'swap',
   variable: '--font-sans',
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['200', '300', '400', '500', '600'],
 })
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body
-				className={`${inter.className} ${sans.className} my-6 sm:px-6 container mx-auto bg-black text-white`}
+				className={`${inter.className} ${sans.className} font-light my-6 sm:px-6 container mx-auto bg-black text-white`}
 			>
 				{children}
 			</body>
