@@ -106,6 +106,7 @@ async function runQuery (id: string, url: string, apiKey: string): Promise<Query
   const q = new PQueue({ concurrency: 1, autoStart: true })
   const results: QueryRunnerResult[] = []
 
+  log.info(`starting to queue requests for endpoint ${id} with URL ${url}`)
   for (let i = 0; i < config.BENCHMARK_QUERY_COUNT; i++) {
     q.add(async () => {
       const timer = setTimeout(() => {
@@ -114,7 +115,7 @@ async function runQuery (id: string, url: string, apiKey: string): Promise<Query
     
       try {
         const benchUrl = safeConcatUrl('/benchmark/results', url)
-        log.info(`fetching endpoint ${id} with URL ${benchUrl}`)
+        log.debug(`fetching endpoint ${id} with URL ${benchUrl}`)
         const resp = await fetch(benchUrl, {
           signal: controller.signal,
           headers: {
