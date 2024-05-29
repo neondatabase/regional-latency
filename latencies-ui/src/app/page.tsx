@@ -62,7 +62,7 @@ export default async function Home() {
               <AccordionTrigger>
                 <div className="flex items-center gap-2">
                   {neon}
-                  <a href={region} className="text-2xl font-medium text-white">{neonRegionsToNames[region as NeonRegion]}</a>
+                  <a href={`#${region}`} className="text-2xl font-medium text-white">{neonRegionsToNames[region as NeonRegion]}</a>
                 </div>
               </AccordionTrigger>
               <AccordionContent>             
