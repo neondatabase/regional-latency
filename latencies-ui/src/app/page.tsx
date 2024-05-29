@@ -49,7 +49,7 @@ export default async function Home() {
         <p>At Neon we often receive questions similar to:</p>
         <ul className="pl-5 py-2 list-disc">
           <li>What latency should I expect between my hosting platform and Neon&apos;s Virginia region?</li>
-          <li>Why is my API endpoint taking longer than I expected to return results? Is it it performs multiple queries in series?</li>
+          <li>Why is my API endpoint taking longer than I expected to return results? Is it because it performs multiple queries in series?</li>
           <li>How long should a simple <code>SELECT</code> query take to return results?</li>
         </ul>
         <p>This page provides insight into the round trip time between various hosting platforms and Neon regions for a single <code>SELECT</code> query. Take a look at the <Link className="text-neon" href={`#faq`}>Frequently Asked Questions</Link> section to learn more.</p>
