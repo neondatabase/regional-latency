@@ -89,8 +89,11 @@ export default async function Home() {
                                 </h3>
                               </div>
                               <p className="text-sm pt-2 pb-4 text-gray-500">{platformRegionsToNames[item.platformName as PlatformName][item.platformRegion] || item.platformRegion}</p>
+                              <div className="pt-4" style={{height: '150px'}}>
+                                <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
+                              </div>
                               <Table>
-                                <TableHead>
+                                <TableHead className="text-center">
                                   <TableRow>
                                     <TableHeader>P50</TableHeader>
                                     <TableHeader>P75</TableHeader>
@@ -98,7 +101,7 @@ export default async function Home() {
                                     <TableHeader>P99</TableHeader>
                                   </TableRow>
                                 </TableHead>
-                                <TableBody>
+                                <TableBody className="text-center">
                                   <TableRow>
                                     <TableCell className="w-1/5">
                                       {Math.trunc(Number(item.percentiles.p50))} ms
@@ -115,9 +118,6 @@ export default async function Home() {
                                   </TableRow>
                                 </TableBody>
                               </Table>
-                              <div className="pt-4" style={{height: '150px'}}>
-                                <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
-                              </div>
                             </div>
                           )
                         })

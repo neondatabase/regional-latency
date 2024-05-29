@@ -14,19 +14,10 @@ export default class MinMaxChart extends PureComponent<{ data: PercentileEntry }
     }))
     return (
       <ResponsiveContainer width="100%" height="100%">
-        <LineChart
-          data={data}
-          margin={{
-            // top: 5,
-            // right: 5,
-            left: -15,
-            // bottom: 5,
-          }}
-        >
+        <LineChart data={data}>
           <XAxis dataKey={'Timestamp'} fontSize={0}/>
-          <YAxis />
           <Tooltip labelStyle={{color: 'black'}} />
-          <Legend />
+          {/* <Legend verticalAlign="top" /> */}
           <Line type="monotone" dataKey="Min Latency" stroke="#00E699" dot={false} />
           <Line type="monotone" dataKey="Max Latency" stroke="#3395FF" dot={false} />
         </LineChart>

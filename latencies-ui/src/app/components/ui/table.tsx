@@ -164,7 +164,7 @@ export function TableCell({
 				!striped && "border-b border-zinc-950/5 dark:border-white/5",
 				grid &&
 					"border-l border-l-zinc-950/5 first:border-l-0 dark:border-l-white/5",
-				dense ? "py-2.5" : "py-4",
+				dense ? "py-1.5" : "py-2",
 				!bleed && "sm:first:pl-2 sm:last:pr-2",
 			)}
 		>
