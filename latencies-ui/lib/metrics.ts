@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm"
-import { db } from "./drizzle"
+import { BenchmarkResults, BenchmarkRuns, db } from "./drizzle"
 import { log } from "./log"
 
 export type PercentileEntry = {
@@ -52,9 +52,9 @@ type MinMaxTimesQueryResult = {
 export async function getPercentiles (): Promise<NewResultSet> {
   const minMaxLatenciesQueryResult = await db.execute<MinMaxTimesQueryResult>(sql`
     WITH recent_runs AS (
-      SELECT id, timestamp
-      FROM benchmarks.runs
-      WHERE timestamp >= NOW() - INTERVAL '12 hours'
+      SELECT ${BenchmarkRuns.id}, ${BenchmarkRuns.timestamp}
+      FROM ${BenchmarkRuns}
+      WHERE ${BenchmarkRuns.timestamp} >= NOW() - INTERVAL '12 hours'
     ),
     unnested_results AS (
         SELECT 
@@ -65,7 +65,7 @@ export async function getPercentiles (): Promise<NewResultSet> {
             unnest(r.query_times_hot) AS query_time,
             r.timestamp
         FROM
-            benchmarks.results r
+            ${BenchmarkResults} r
         JOIN
             recent_runs rr ON r.run_id = rr.id
     ),

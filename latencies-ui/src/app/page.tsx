@@ -47,12 +47,12 @@ export default async function Home() {
 			</div>
       <div className="pt-8">
         <p>At Neon we often receive questions similar to:</p>
-        <ul className="pl-5 py-2 list-disc">
-          <li>What latency should I expect between my hosting platform and Neon&apos;s Virginia region?</li>
-          <li>Why is my API endpoint taking longer than I expected to return results? Is it because it performs multiple queries in series?</li>
+        <ul className="pl-5 py-3 list-disc">
+          <li>What latency should I expect between my hosting platform and my Postgres database on Neon?</li>
           <li>How long should a simple <code>SELECT</code> query take to return results?</li>
+          <li>My API response times are slow. Could it be the database?</li>
         </ul>
-        <p>This page provides insight into the round trip time between various hosting platforms and Neon regions for a single <code>SELECT</code> query. Take a look at the <Link className="text-neon" href={`#faq`}>Frequently Asked Questions</Link> section to learn more.</p>
+        <p>This page provides insight into the latency - or <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">round-trip time (RTT)</Link> - for a single <code>SELECT</code> query between various cloud hosting platforms and Neon regions. Check the <Link className="text-neon" href={`#faq`}>Frequently Asked Questions</Link> section to learn more about the data presented.</p>
       </div>
       {/* <p className="pt-6">Click on a Neon region to view the query latency between it and popular cloud provider infrastructure.</p> */}
 			<div className="flex flex-col gap-12 pt-4">
@@ -62,12 +62,12 @@ export default async function Home() {
               <AccordionTrigger>
                 <div className="flex items-center gap-2">
                   {neon}
-                  <h2 className="text-2xl font-medium">{neonRegionsToNames[region as NeonRegion]}</h2>
+                  <a href={region} className="text-2xl font-medium text-white">{neonRegionsToNames[region as NeonRegion]}</a>
                 </div>
               </AccordionTrigger>
               <AccordionContent>             
                 <div className="space-y-3" key={region}>
-                  <div className="relative z-10 rounded-[14px] bg-white bg-opacity-[0.03] backdrop-blur-[4px]">
+                  <div className="relative z-10 rounded-[14px] backdrop-blur-[4px]">
                     <div
                       className="absolute inset-0 z-10 rounded-[inherit]"
                       aria-hidden="true"
@@ -77,7 +77,7 @@ export default async function Home() {
                       aria-hidden="true"
                     />
                     <div className="relative z-20 w-full flex flex-col xl:rounded-lg gap-5">
-                      <p className="pb-4">Percentiles representing the distribution of query times between a various hosting providers and Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region, and a graph showing the minimum and maximum latency observed in each test performed.</p>
+                      <p className="pb-4">Percentiles representing the distribution of query times between a various hosting providers and Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region, and a graph showing the minimum and maximum latency observed in each test performed. Open an <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">issue on GitHub</Link> if you'd like to see a new provider or region added.</p>
                       {
                         data[region].filter(item => platformNames.indexOf(item.platformName as PlatformName) !== -1).map((item) => {
                           return (

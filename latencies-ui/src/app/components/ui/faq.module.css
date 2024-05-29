@@ -1,0 +1,9 @@
+.header {
+    @apply text-lg;
+    @apply text-gray-400;
+    @apply pb-2;
+}
+.paragraph {
+   @apply font-light;
+   @apply pb-3;
+}
