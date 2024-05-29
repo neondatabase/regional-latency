@@ -115,7 +115,7 @@ export default async function Home() {
                                   </TableRow>
                                 </TableBody>
                               </Table>
-                              <div className="pt-4" style={{height: '100px'}}>
+                              <div className="pt-4" style={{height: '150px'}}>
                                 <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
                               </div>
                             </div>
