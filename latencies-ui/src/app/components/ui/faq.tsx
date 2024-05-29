@@ -17,8 +17,8 @@ export function FAQ() {
           <p className={styles.paragraph}>
             This dashboard provides P50 and P99 latency measurements for each deployment platform and region. You can use these measurements to estimate the impact of database queries on API response times for your application.
           </p>
-          <p>
-            For example, assume you are developing an API endpoint that performs 2 database queries in series. Assume the listed P99 latency between your Neon region and cloud provider is 15 milliseconds and the P50 is 6 milliseconds. Based on this information you can estimate that latency will account for between 12 and 30 milliseconds of your API endpoint&apos;s overall response time. If your query is poorly optimized, you may see higher latencies.
+          <p className={styles.paragraph}>
+            For example, assume you are developing an API endpoint that performs 2 database queries in series. Assume the listed P99 latency between your Neon region and cloud provider is 15 milliseconds and the P50 is 6 milliseconds. Based on this information you can estimate that latency will account for approximately 12 to 30 milliseconds of your API endpoint&apos;s overall response time.
           </p>
         </li>
         <li className="pt-2">

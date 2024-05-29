@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm"
 import { BenchmarkResults, BenchmarkRuns, db } from "./drizzle"
 import { log } from "./log"
+import { NeonRegion, neonRegionsToNames } from "./platforms"
+import { neon } from "@neondatabase/serverless"
 
 export type PercentileEntry = {
   platformRegion: string
@@ -26,7 +28,7 @@ export type ResultSet = {
 }
 
 export type NewResultSet = {
-  [neonRegion: string]: PercentileEntry[]
+  [neonRegion in NeonRegion]: PercentileEntry[]
 }
 
 type PercentilesQueryResult = {
@@ -49,7 +51,8 @@ type MinMaxTimesQueryResult = {
   result_timestamps: string[]
 }
 
-export async function getPercentiles (): Promise<NewResultSet> {
+// TODO: revist this function to see if we can improve it
+export async function getMetricsData (): Promise<NewResultSet> {
   const minMaxLatenciesQueryResult = await db.execute<MinMaxTimesQueryResult>(sql`
     WITH recent_runs AS (
       SELECT ${BenchmarkRuns.id}, ${BenchmarkRuns.timestamp}
@@ -168,7 +171,8 @@ export async function getPercentiles (): Promise<NewResultSet> {
   `)
 
   const results = percentilesQueryResult.rows.reduce((result, row) => {
-    const { platform_name, platform_region, neon_region, timestamp, p50, p75, p95, p99 } = row
+    const { platform_name, platform_region, timestamp, p50, p75, p95, p99 } = row
+    const neon_region = row.neon_region as NeonRegion
     const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
       return minMaxRow.neon_region === neon_region && minMaxRow.platform_region === platform_region && minMaxRow.platform_name === platform_name
     })
@@ -201,6 +205,13 @@ export async function getPercentiles (): Promise<NewResultSet> {
 
     return result
   }, {} as NewResultSet)
+
+  // Fill in any missing regions with empty arrays
+  Object.keys(neonRegionsToNames).forEach((neonRegion) => {
+    if (!results[neonRegion as NeonRegion]) {
+      results[neonRegion as NeonRegion] = []
+    }
+  })
 
   return results
 }

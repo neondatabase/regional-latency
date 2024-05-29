@@ -4,6 +4,5 @@
     @apply pb-2;
 }
 .paragraph {
-   @apply font-light;
    @apply pb-3;
 }

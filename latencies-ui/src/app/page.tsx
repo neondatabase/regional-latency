@@ -1,4 +1,4 @@
-import { getPercentiles } from "@/lib/metrics";
+import { getMetricsData } from "@/lib/metrics";
 import {
 	Table,
 	TableHeader,
@@ -19,7 +19,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 export const revalidate = 5 * 60
 
 export default async function Home() {
-  const data = await getPercentiles()
+  const data = await getMetricsData()
   const sortedRegionKeys = Object.keys(data).sort((a, b) => {
     const r1 = a as NeonRegion
     const r2 = b as NeonRegion
@@ -59,10 +59,15 @@ export default async function Home() {
         <Accordion type="single" defaultValue="region-us-east-1.aws.neon.tech" collapsible className="w-full">
 				  {sortedRegionKeys.map((region) => (
             <AccordionItem key={region} value={`region-${region}`}>
-              <AccordionTrigger>
-                <div className="flex items-center gap-2">
-                  {neon}
-                  <a href={`#${region}`} className="text-2xl font-medium text-white">{neonRegionsToNames[region as NeonRegion]}</a>
+              <AccordionTrigger className="flex" disabled={data[region as NeonRegion].length === 0}>
+                <div>
+                  <div className="flex items-center gap-2">
+                    {neon}
+                    <h3 className="sm:text-2xl text-xl font-medium text-white">{neonRegionsToNames[region as NeonRegion]}</h3>
+                  </div>
+                  <div className="text-left">
+                    <small className="text-md text-gray-500">{data[region as NeonRegion].length === 0  ? 'Coming Soon' : 'Data Available'}</small>
+                  </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent>             
@@ -77,9 +82,9 @@ export default async function Home() {
                       aria-hidden="true"
                     />
                     <div className="relative z-20 w-full flex flex-col xl:rounded-lg gap-5">
-                      <p className="pb-4">Percentiles representing the distribution of query times between a various hosting providers and Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region, and a graph showing the minimum and maximum latency observed in each test performed. Open an <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">issue on GitHub</Link> if you&apos;d like to see a new provider or region added.</p>
+                      <p className="pb-4">A collection of percentiles and graphs showcasing the distribution of query times, as well as the minimum and maximum query times seen across various hosting providers communicating with Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region. Open an <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">issue on GitHub</Link> if you&apos;d like to see a new provider or region added.</p>
                       {
-                        data[region].filter(item => platformNames.indexOf(item.platformName as PlatformName) !== -1).map((item) => {
+                        data[region as NeonRegion].filter(item => platformNames.indexOf(item.platformName as PlatformName) !== -1).map((item) => {
                           return (
                             <div key={`${item.platformName}${item.platformRegion}`}>
                               <div className="flex space-x-2 items-center">
@@ -89,9 +94,6 @@ export default async function Home() {
                                 </h3>
                               </div>
                               <p className="text-sm pt-2 pb-4 text-gray-500">{platformRegionsToNames[item.platformName as PlatformName][item.platformRegion] || item.platformRegion}</p>
-                              <div className="pt-4" style={{height: '150px'}}>
-                                <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
-                              </div>
                               <Table>
                                 <TableHead className="text-center">
                                   <TableRow>
@@ -118,6 +120,9 @@ export default async function Home() {
                                   </TableRow>
                                 </TableBody>
                               </Table>
+                              <div style={{height: '150px'}}>
+                                <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
+                              </div>
                             </div>
                           )
                         })
