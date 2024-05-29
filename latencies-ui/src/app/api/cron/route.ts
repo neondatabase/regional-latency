@@ -196,14 +196,6 @@ function getBenchmarkEndpoints (): Endpoint[] {
   const vercelHost = process.env.VERCEL_URL?.includes('localhost') ? `http://${process.env.VERCEL_URL}` : `https://${process.env.VERCEL_URL}`
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    
-    // Run the benchmark from Vercel to Neon US East 2
-    DB_BENCH_ENDPOINT_VERCEL_US_EAST_2: new URL(`${vercelHost}/api/nqb/us-east-2`).toString(),
-    DB_BENCH_APIKEY_VERCEL_US_EAST_2: process.env.NQB_API_KEY,
-
-    // Run the benchmark from Vercel to Neon US East 1
-    DB_BENCH_ENDPOINT_VERCEL_US_EAST_1: new URL(`${vercelHost}/api/nqb/us-east-1`).toString(),
-    DB_BENCH_APIKEY_VERCEL_US_EAST_1: process.env.NQB_API_KEY
   }
 
   const URL_PREFIX = 'DB_BENCH_ENDPOINT_'
