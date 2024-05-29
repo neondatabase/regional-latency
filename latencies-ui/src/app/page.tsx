@@ -77,7 +77,7 @@ export default async function Home() {
                       aria-hidden="true"
                     />
                     <div className="relative z-20 w-full flex flex-col xl:rounded-lg gap-5">
-                      <p className="pb-4">Percentiles representing the distribution of query times between a various hosting providers and Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region, and a graph showing the minimum and maximum latency observed in each test performed. Open an <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">issue on GitHub</Link> if you'd like to see a new provider or region added.</p>
+                      <p className="pb-4">Percentiles representing the distribution of query times between a various hosting providers and Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region, and a graph showing the minimum and maximum latency observed in each test performed. Open an <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">issue on GitHub</Link> if you&apos;d like to see a new provider or region added.</p>
                       {
                         data[region].filter(item => platformNames.indexOf(item.platformName as PlatformName) !== -1).map((item) => {
                           return (
