@@ -42,6 +42,7 @@ export const platformRegionsToNames: PlatformRegionsNamesMap = {
   },
   'digitalocean': {
     nyc: "New York City (New York, USA)",
+    sfo: 'San Francisco (California, USA)'
   }
 }
 
