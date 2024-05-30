@@ -119,6 +119,7 @@ export async function getMetricsData (): Promise<NewResultSet> {
             unnest(query_times_hot) AS query_time
         FROM 
             benchmarks.results
+        WHERE ${BenchmarkResults.timestamp} >= NOW() - INTERVAL '12 hours'
     ),
     percentiles AS (
         SELECT 
