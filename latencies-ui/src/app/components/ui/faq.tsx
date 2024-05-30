@@ -22,6 +22,12 @@ export function FAQ() {
           </p>
         </li>
         <li className="pt-2">
+          <h3 className={styles.header}>How often is the data updated?</h3>
+          <p className={styles.paragraph}>
+            New data is collected for each hosting platform and Neon region every 15 minutes. 
+          </p>
+        </li>
+        <li className="pt-2">
           <h3 className={styles.header}>Is the application and benchmark code open-source?</h3>
           <p className={styles.paragraph}>
             Yes! You can find the code for this application in the <Link target="_blank" href="https://github.com/evanshortiss/neon-latency-tracker/">neon-latency-tracker</Link> repository on GitHub. The benchmark code that runs on each deployment platform is located in the <Link target="_blank" href="https://github.com/evanshortiss/neon-query-bench/">neon-query-bench</Link> repository on GitHub.
