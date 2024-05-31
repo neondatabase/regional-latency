@@ -46,13 +46,7 @@ export default async function Home() {
 				</p>
 			</div>
       <div className="pt-8">
-        <p>At Neon we often receive questions similar to:</p>
-        <ul className="pl-5 py-3 list-disc">
-          <li>What latency should I expect between my hosting platform and my Postgres database on Neon?</li>
-          <li>How long should a simple <code>SELECT</code> query take to return results?</li>
-          <li>My API response times are slow. Could it be the database?</li>
-        </ul>
-        <p>This page provides insight into the latency - or <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">round-trip time (RTT)</Link> - for a single <code>SELECT</code> query between various cloud hosting platforms and Neon regions. Check the <Link className="text-neon" href={`#faq`}>Frequently Asked Questions</Link> section to learn more about the data presented.</p>
+        <p>This page provides insight into the latency - or <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">round-trip time (RTT)</Link> - for a single <code>SELECT</code> query between various cloud hosting platforms and Neon regions. Visit the <Link className="text-neon" href={`#faq`}>Frequently Asked Questions</Link> section to learn more about the data presented.</p>
       </div>
       {/* <p className="pt-6">Click on a Neon region to view the query latency between it and popular cloud provider infrastructure.</p> */}
 			<div className="flex flex-col gap-12 pt-4">

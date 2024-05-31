@@ -15,10 +15,10 @@ export function FAQ() {
         <li className="pt-2">
           <h3 className={styles.header}>How can I estimate the impact of database queries on API response times using this dashboard?</h3>
           <p className={styles.paragraph}>
-            This dashboard provides P50 and P99 latency measurements for each deployment platform and region. You can use these measurements to estimate the impact of database queries on API response times for your application.
+            You can use the P50 and P99 measurements to approximate the best and worst case impact of your database queries on response times for your application.
           </p>
           <p className={styles.paragraph}>
-            For example, assume you are developing an API endpoint that performs 2 well-optimised database queries in sequence. Assume the listed P99 latency for basic queries between your Neon region and cloud provider is 15 milliseconds and the P50 is 6 milliseconds. Based on this information you can estimate that those two queries will account for at least 12 to 30 milliseconds of your API endpoint&apos;s overall response time.
+            For example, assume you are developing an API endpoint that performs 2 well-optimised database queries in sequence. If the listed P99 latency for basic queries between your Neon region and cloud provider is 15 milliseconds and the P50 is 6 milliseconds, you can estimate that those two queries will account for at least 12 to 30 milliseconds of your API endpoint&apos;s overall response time.
           </p>
         </li>
         <li className="pt-2">
@@ -30,13 +30,13 @@ export function FAQ() {
         <li className="pt-2">
           <h3 className={styles.header}>Is the application and benchmark code open-source?</h3>
           <p className={styles.paragraph}>
-            Yes! You can find the code for this application in the <Link target="_blank" href="https://github.com/evanshortiss/neon-latency-tracker/">neon-latency-tracker</Link> repository on GitHub. The benchmark code that runs on each deployment platform is located in the <Link target="_blank" href="https://github.com/evanshortiss/neon-query-bench/">neon-query-bench</Link> repository on GitHub.
+            Yes. Application code can be found in the <Link target="_blank" href="https://github.com/evanshortiss/neon-latency-tracker/">neon-latency-tracker</Link> repository on GitHub. Benchmark code that runs on each deployment platform is located in the <Link target="_blank" href="https://github.com/evanshortiss/neon-query-bench/">neon-query-bench</Link> repository on GitHub.
           </p>
         </li>
         <li className="pt-2">
           <h3 className={styles.header}>How are the Neon Postgres databases configured for testing?</h3>
           <p className={styles.paragraph}>
-            The Neon databases used for testing are set to our <Link target="_blank" href="https://neon.tech/docs/get-started-with-neon/production-checklist#select-the-right-compute-size">Free Tier size of 0.25 CU</Link> and have <Link target="_blank" href="https://neon.tech/docs/introduction/auto-suspend">auto-suspend</Link> disabled. This is to prevent cold starts being factored into latency measurements. Production applications will rarely encounter a cold start, since they receive consistent traffic.
+            The Neon databases used for testing are set to our <Link target="_blank" href="https://neon.tech/docs/get-started-with-neon/production-checklist#select-the-right-compute-size">Free Tier size of 0.25 CU</Link>. Neon's <Link target="_blank" href="https://neon.tech/docs/introduction/auto-suspend">auto-suspend feature</Link> is disabled to prevent cold starts being factored into latency measurements. Production applications will rarely encounter a cold start, since they receive consistent traffic.
           </p>
         </li>
         <li>
@@ -52,12 +52,15 @@ export function FAQ() {
           </p>
         </li>
         <li className="pt-2">
-          <h3 className={styles.header}>How are the deployment platforms configured for testing?</h3>
+          <h3 className={styles.header}>What resources are provisioned on the deployment platforms?</h3>
           <p className={styles.paragraph}>
-            The default instance size and scaling options are used on each deployment platform. For example, on DigitalOcean App Platform the instance size has 1vCPU and 1GB of memory.
+            The default instance size and scaling options are used on each deployment platform. For example, on DigitalOcean App Platform the instance has 1vCPU and 1GB of memory.
           </p>
+        </li>
+        <li>
+          <h3 className={styles.header}>Are serverless environments warmed up prior to testing?</h3>
           <p className={styles.paragraph}>
-            Similarly, the deployment platforms involved are &quot;warmed up&quot; before we measure latency. The warm up process involves performing a fixed number of queries prior to beginning latency measurements. This is to ensure that the latency measurements are indicative of a real-world application handling production traffic, i.e an application that doesn&apos;t see frequent cold starts.
+            Yes. The deployment platforms involved are &quot;warmed up&quot; before we measure latency. The warm up process involves performing a fixed number of queries prior to beginning latency measurements. This is to ensure that the latency measurements are indicative of a real-world application handling production traffic, i.e an application that doesn&apos;t see frequent <Link href="https://vercel.com/guides/how-can-i-improve-serverless-function-lambda-cold-start-performance-on-vercel" target="blank">cold starts</Link>.
           </p>
         </li>
         <li className="pt-2">
