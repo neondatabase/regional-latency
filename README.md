@@ -2,7 +2,6 @@
 
 This project provides a dashboard showing the latency you can expect when querying a Neon database from different regions.
 
-
 ## Architecture
 
 This tool works by ingesting data from "runners" that check their latency to
@@ -16,10 +15,8 @@ tool uses [Drizzle](https://orm.drizzle.team/) and the Neon [serverless driver](
 Each runner POSTs their results to a centralised function that stores them in
 a Neon database. This function is protected by an API key.
 
-
-
-* id
-* platform_name - String, e.g "vercel"
-* platform_region - String, e.g "iad1"
-* latencies - Array of integers
-* neon_region - (FK, or just string?)
+- id
+- platform_name - String, e.g "vercel"
+- platform_region - String, e.g "iad1"
+- latencies - Array of integers
+- neon_region - (FK, or just string?)

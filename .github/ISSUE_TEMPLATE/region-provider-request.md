@@ -4,7 +4,6 @@ about: Request a new region or provider be added to the application
 title: New Region or Provider Request
 labels: ''
 assignees: evanshortiss
-
 ---
 
 Provider Name: REPLACE ME

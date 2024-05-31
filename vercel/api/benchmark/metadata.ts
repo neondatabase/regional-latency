@@ -8,6 +8,6 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     version,
     platformName: platform.getPlatformName(),
     platformRegion: platform.getPlatformRegion(),
-    neonRegion
+    neonRegion,
   } as QueryRunnerMetadata)
 }

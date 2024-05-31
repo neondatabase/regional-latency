@@ -11,27 +11,27 @@
 import nqb, { QueryRecordPayload } from 'neon-query-bench';
 
 export default {
-	async fetch(request: Request, env: Record<string, string|undefined>, ctx: ExecutionContext): Promise<Response> {
+	async fetch(request: Request, env: Record<string, string | undefined>, ctx: ExecutionContext): Promise<Response> {
 		if (!request.cf || typeof request.cf.colo !== 'string') {
-			throw new Error('unable to determine cloudflare region')
+			throw new Error('unable to determine cloudflare region');
 		}
 
-		const { platform, runner } = nqb(env)
+		const { platform, runner } = nqb(env);
 
 		const queryRunnerResult = await runner({
-			apiKey: request.headers.get('x-api-key') as string|undefined
-		})
+			apiKey: request.headers.get('x-api-key') as string | undefined,
+		});
 
 		const payload: QueryRecordPayload = {
 			queryRunnerResult,
 			platformName: platform.getPlatformName(),
-			platformRegion: request.cf.colo
-		}
+			platformRegion: request.cf.colo,
+		};
 
 		return new Response(JSON.stringify(payload), {
-      headers: {
-        'content-type': 'application/json;charset=utf-8'
-      }
-    });
+			headers: {
+				'content-type': 'application/json;charset=utf-8',
+			},
+		});
 	},
 };

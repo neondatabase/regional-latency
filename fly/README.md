@@ -13,7 +13,7 @@ database secret, as shown in the sample commands below.
 cd regions/iad
 
 # Create an initial config you're deploying for the first time
-fly launch 
+fly launch
 
 # Set the Neon database URL
 fly secrets set NQB_DATABASE_URL='postgresql://foo:bar@ep-adj-noun-12345.us-east-2.aws.neon.tech/neondb?sslmode=require'

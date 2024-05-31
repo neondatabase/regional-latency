@@ -1,8 +1,8 @@
-import { sql } from "drizzle-orm"
-import { BenchmarkResults, BenchmarkRuns, db } from "./drizzle"
-import { log } from "./log"
-import { NeonRegion, neonRegionsToNames } from "./platforms"
-import { neon } from "@neondatabase/serverless"
+import { sql } from 'drizzle-orm'
+import { BenchmarkResults, BenchmarkRuns, db } from './drizzle'
+import { log } from './log'
+import { NeonRegion, neonRegionsToNames } from './platforms'
+import { neon } from '@neondatabase/serverless'
 
 export type PercentileEntry = {
   platformRegion: string
@@ -14,7 +14,7 @@ export type PercentileEntry = {
     p75: number
     p95: number
     p99: number
-  },
+  }
   minMaxLatencies: {
     min: number
     max: number
@@ -52,8 +52,9 @@ type MinMaxTimesQueryResult = {
 }
 
 // TODO: revist this function to see if we can improve it
-export async function getMetricsData (): Promise<NewResultSet> {
-  const minMaxLatenciesQueryResult = await db.execute<MinMaxTimesQueryResult>(sql`
+export async function getMetricsData(): Promise<NewResultSet> {
+  const minMaxLatenciesQueryResult =
+    await db.execute<MinMaxTimesQueryResult>(sql`
     WITH recent_runs AS (
       SELECT ${BenchmarkRuns.id}, ${BenchmarkRuns.timestamp}
       FROM ${BenchmarkRuns}
@@ -172,34 +173,48 @@ export async function getMetricsData (): Promise<NewResultSet> {
   `)
 
   const results = percentilesQueryResult.rows.reduce((result, row) => {
-    const { platform_name, platform_region, timestamp, p50, p75, p95, p99 } = row
+    const { platform_name, platform_region, timestamp, p50, p75, p95, p99 } =
+      row
     const neon_region = row.neon_region as NeonRegion
-    const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
-      return minMaxRow.neon_region === neon_region && minMaxRow.platform_region === platform_region && minMaxRow.platform_name === platform_name
-    })
+    const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find(
+      (minMaxRow) => {
+        return (
+          minMaxRow.neon_region === neon_region &&
+          minMaxRow.platform_region === platform_region &&
+          minMaxRow.platform_name === platform_name
+        )
+      }
+    )
 
     if (!result[neon_region]) {
       result[neon_region] = []
     }
-    
+
     result[neon_region].push({
       percentiles: {
         p50,
         p75,
         p95,
-        p99
+        p99,
       },
       platformName: platform_name,
       neonRegion: neon_region,
       platformRegion: platform_region,
       timestamp,
-      minMaxLatencies: correspondingMinMaxLatencyRow ? correspondingMinMaxLatencyRow.min_query_times.map((min, index) => {
-        return {
-          min,
-          max: correspondingMinMaxLatencyRow.max_query_times[index],
-          timestamp: correspondingMinMaxLatencyRow.result_timestamps[index]
-        }
-      }).sort((a, b) => new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1) : []
+      minMaxLatencies: correspondingMinMaxLatencyRow
+        ? correspondingMinMaxLatencyRow.min_query_times
+            .map((min, index) => {
+              return {
+                min,
+                max: correspondingMinMaxLatencyRow.max_query_times[index],
+                timestamp:
+                  correspondingMinMaxLatencyRow.result_timestamps[index],
+              }
+            })
+            .sort((a, b) =>
+              new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1
+            )
+        : [],
     })
 
     log.debug('metrics data: %j', result)

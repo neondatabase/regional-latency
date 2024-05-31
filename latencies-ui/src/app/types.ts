@@ -1,4 +1,4 @@
-import { QueryRunnerMetadata } from "neon-query-bench"
+import { QueryRunnerMetadata } from 'neon-query-bench'
 
 export type PlatformTarget = {
   url: string
@@ -10,7 +10,7 @@ export type PlatformConfig = {
   targets: PlatformTarget[]
 }
 
-export type NQBResult = QueryRunnerMetadata&{
+export type NQBResult = QueryRunnerMetadata & {
   queryTimes: number[]
   queryTimesHot: number[]
 }
