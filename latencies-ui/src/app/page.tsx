@@ -54,7 +54,8 @@ export default async function Home() {
             round-trip time (RTT)
           </Link>{' '}
           - for a single <code>SELECT</code> query between cloud hosting platforms and the Neon region nearest to them.
-          Visit the{' '}
+          Latency between your application backend is one of many factors to consider when choosing a hosting platform
+          for your application. Visit the{' '}
           <Link className="text-neon" href={`#faq`}>
             Frequently Asked Questions
           </Link>{' '}
