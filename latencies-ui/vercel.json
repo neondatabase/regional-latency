@@ -1,4 +1,9 @@
 {
+  "rewrites": [
+    { "source": "/", "destination": "/regional-latency" },
+    { "source": "/:asset*", "destination": "/regional-latency/:asset*" },
+    { "source": "/(.*)", "destination": "/" }
+  ],
   "crons": [
     {
       "path": "/api/cron",
