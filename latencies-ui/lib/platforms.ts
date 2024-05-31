@@ -25,12 +25,7 @@ export const neonRegionSortOrder: NeonRegion[] = [
   'ap-southeast-2.aws.neon.tech',
 ]
 
-export const platformNames: PlatformName[] = [
-  'vercel',
-  'railway',
-  'fly',
-  'digitalocean',
-]
+export const platformNames: PlatformName[] = ['vercel', 'railway', 'fly', 'digitalocean']
 export const platformNamesFormatted: { [key in PlatformName]: string } = {
   vercel: 'Vercel',
   railway: 'Railway',

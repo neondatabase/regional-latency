@@ -22,32 +22,21 @@ type Endpoint = {
   apiKey: string
 }
 
-export async function GET(
-  req: NextRequest,
-  res: NextRequest
-): Promise<NextResponse> {
+export async function GET(req: NextRequest, res: NextRequest): Promise<NextResponse> {
   log.info('starting benchmark cron job')
 
   return secureCron(req, async () => {
     const timestamp = new Date()
 
     const endpoints = getBenchmarkEndpoints()
-    const results = await Promise.allSettled(
-      endpoints.map((e) => processEndpoint(e))
-    )
+    const results = await Promise.allSettled(endpoints.map((e) => processEndpoint(e)))
 
-    log.info(
-      'finished procesing all endpoints. updating database with results: %j',
-      results
-    )
+    log.info('finished procesing all endpoints. updating database with results: %j', results)
 
     await db.transaction(async (tx) => {
       // Create an entry for this specific test run
       log.debug('insert new run to generate run ID')
-      const row = await tx
-        .insert(BenchmarkRuns)
-        .values({ timestamp })
-        .returning()
+      const row = await tx.insert(BenchmarkRuns).values({ timestamp }).returning()
       const { id } = row[0]
 
       // Store indivual results for this test run
@@ -102,31 +91,20 @@ async function processEndpoint(endpoint: Endpoint): Promise<NQBResult> {
   log.info(`fetched metadata for endpoint ${id} with URL ${url}`)
 
   const result = {
-    queryTimes: queryTimes
-      .map((r) => r.queryTimes.map((qt) => qt.end - qt.start))
-      .flatMap((r) => r),
-    queryTimesHot: queryTimesHot
-      .map((r) => r.queryTimes.map((qt) => qt.end - qt.start))
-      .flatMap((r) => r),
+    queryTimes: queryTimes.map((r) => r.queryTimes.map((qt) => qt.end - qt.start)).flatMap((r) => r),
+    queryTimesHot: queryTimesHot.map((r) => r.queryTimes.map((qt) => qt.end - qt.start)).flatMap((r) => r),
     version: metadata.version,
     neonRegion: metadata.neonRegion,
     platformName: metadata.platformName,
     platformRegion: metadata.platformRegion,
   }
 
-  log.info(
-    `finished processing endpoint ${id} with URL ${url}. Result is %j`,
-    result
-  )
+  log.info(`finished processing endpoint ${id} with URL ${url}. Result is %j`, result)
 
   return result
 }
 
-async function runQuery(
-  id: string,
-  url: string,
-  apiKey: string
-): Promise<QueryRunnerResult[]> {
+async function runQuery(id: string, url: string, apiKey: string): Promise<QueryRunnerResult[]> {
   const controller = new AbortController()
   const q = new PQueue({ concurrency: 1, autoStart: true })
   const results: QueryRunnerResult[] = []
@@ -152,9 +130,7 @@ async function runQuery(
 
         if (resp.status !== 200) {
           const text = await resp.text()
-          throw new Error(
-            `received status code ${resp.status} from endpoint and text ${text}`
-          )
+          throw new Error(`received status code ${resp.status} from endpoint and text ${text}`)
         } else {
           const json = (await resp.json()) as QueryRunnerResult
 
@@ -163,9 +139,7 @@ async function runQuery(
         }
       } catch (e: unknown) {
         if (e instanceof Error) {
-          throw new Error(
-            `failed to process endpoint ${id}. exception message was "${e.message}"`
-          )
+          throw new Error(`failed to process endpoint ${id}. exception message was "${e.message}"`)
         } else {
           const errorId = randomUUID()
           log.error(`exception (${errorId}) processing ${id}:`)
@@ -179,18 +153,14 @@ async function runQuery(
     })
   }
 
-  log.info(
-    `waiting for queued requests to finish for endpoint ${id} with URL ${url}`
-  )
+  log.info(`waiting for queued requests to finish for endpoint ${id} with URL ${url}`)
   q.on('error', (e) => {
     log.error(`error processing fetch for endpointc ${id}`)
     log.error(e)
   })
   await q.onIdle()
 
-  log.info(
-    `queued requests finished for endpoint ${id} with URL ${url}. fetching endpoint metadata`
-  )
+  log.info(`queued requests finished for endpoint ${id} with URL ${url}. fetching endpoint metadata`)
 
   return results
 }
@@ -201,12 +171,9 @@ async function getRunnerMeatadata(url: string) {
     controller.abort()
   }, 5000)
 
-  const metadata: QueryRunnerMetadata = await fetch(
-    safeConcatUrl('/benchmark/metadata', url),
-    {
-      signal: controller.signal,
-    }
-  )
+  const metadata: QueryRunnerMetadata = await fetch(safeConcatUrl('/benchmark/metadata', url), {
+    signal: controller.signal,
+  })
     .then((r) => r.json())
     .finally(() => clearTimeout(timer))
 
@@ -249,16 +216,12 @@ function getBenchmarkEndpoints(): Endpoint[] {
       if (!id) {
         log.warn(`variable named ${varName} is missing suffix`)
       } else {
-        log.info(
-          `parsing endpoint config for environment variable named "${varName}"`
-        )
+        log.info(`parsing endpoint config for environment variable named "${varName}"`)
         const apiKey = env[`${API_KEY_PREFIX}${id}`]
         const url = env[varName]
 
         if (!apiKey || !url) {
-          log.warn(
-            `expected api key in variable "${API_KEY_PREFIX}${id}" or URL in ${varName}, but they were missing`
-          )
+          log.warn(`expected api key in variable "${API_KEY_PREFIX}${id}" or URL in ${varName}, but they were missing`)
         } else {
           log.info(`adding benchmark endpoint with id "${id}"`)
           endpoints.push({

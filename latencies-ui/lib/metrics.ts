@@ -53,8 +53,7 @@ type MinMaxTimesQueryResult = {
 
 // TODO: revist this function to see if we can improve it
 export async function getMetricsData(): Promise<NewResultSet> {
-  const minMaxLatenciesQueryResult =
-    await db.execute<MinMaxTimesQueryResult>(sql`
+  const minMaxLatenciesQueryResult = await db.execute<MinMaxTimesQueryResult>(sql`
     WITH recent_runs AS (
       SELECT ${BenchmarkRuns.id}, ${BenchmarkRuns.timestamp}
       FROM ${BenchmarkRuns}
@@ -173,18 +172,15 @@ export async function getMetricsData(): Promise<NewResultSet> {
   `)
 
   const results = percentilesQueryResult.rows.reduce((result, row) => {
-    const { platform_name, platform_region, timestamp, p50, p75, p95, p99 } =
-      row
+    const { platform_name, platform_region, timestamp, p50, p75, p95, p99 } = row
     const neon_region = row.neon_region as NeonRegion
-    const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find(
-      (minMaxRow) => {
-        return (
-          minMaxRow.neon_region === neon_region &&
-          minMaxRow.platform_region === platform_region &&
-          minMaxRow.platform_name === platform_name
-        )
-      }
-    )
+    const correspondingMinMaxLatencyRow = minMaxLatenciesQueryResult.rows.find((minMaxRow) => {
+      return (
+        minMaxRow.neon_region === neon_region &&
+        minMaxRow.platform_region === platform_region &&
+        minMaxRow.platform_name === platform_name
+      )
+    })
 
     if (!result[neon_region]) {
       result[neon_region] = []
@@ -207,13 +203,10 @@ export async function getMetricsData(): Promise<NewResultSet> {
               return {
                 min,
                 max: correspondingMinMaxLatencyRow.max_query_times[index],
-                timestamp:
-                  correspondingMinMaxLatencyRow.result_timestamps[index],
+                timestamp: correspondingMinMaxLatencyRow.result_timestamps[index],
               }
             })
-            .sort((a, b) =>
-              new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1
-            )
+            .sort((a, b) => (new Date(a.timestamp) > new Date(b.timestamp) ? 1 : -1))
         : [],
     })
 

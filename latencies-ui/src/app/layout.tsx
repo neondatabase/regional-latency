@@ -12,15 +12,10 @@ const sans = IBM_Plex_Sans({
 
 export const metadata: Metadata = {
   title: 'Neon Regional Latencies',
-  description:
-    'View the latencies of queries to Neon databases across different deployment platforms and regions.',
+  description: 'View the latencies of queries to Neon databases across different deployment platforms and regions.',
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body

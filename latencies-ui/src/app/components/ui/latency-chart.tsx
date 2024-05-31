@@ -19,18 +19,8 @@ export default class MinMaxChart extends PureComponent<{
           <XAxis dataKey={'Timestamp'} fontSize={0} />
           <Tooltip labelStyle={{ color: 'black' }} />
           {/* <Legend verticalAlign="top" /> */}
-          <Line
-            type="monotone"
-            dataKey="Min Latency"
-            stroke="#00E699"
-            dot={false}
-          />
-          <Line
-            type="monotone"
-            dataKey="Max Latency"
-            stroke="#3395FF"
-            dot={false}
-          />
+          <Line type="monotone" dataKey="Min Latency" stroke="#00E699" dot={false} />
+          <Line type="monotone" dataKey="Max Latency" stroke="#3395FF" dot={false} />
         </LineChart>
       </ResponsiveContainer>
     )

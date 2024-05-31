@@ -1,13 +1,6 @@
 import { Pool } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-serverless'
-import {
-  serial,
-  text,
-  timestamp,
-  index,
-  integer,
-  pgSchema,
-} from 'drizzle-orm/pg-core'
+import { serial, text, timestamp, index, integer, pgSchema } from 'drizzle-orm/pg-core'
 import { InferSelectModel, sql } from 'drizzle-orm'
 
 export const schema = pgSchema('benchmarks')

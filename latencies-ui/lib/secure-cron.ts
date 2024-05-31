@@ -9,9 +9,7 @@ export default async function secureCron(
   const authHeader = req.headers.get('authorization')
 
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    log.error(
-      'cron invocation terminated due to missing or incorrect authorization header'
-    )
+    log.error('cron invocation terminated due to missing or incorrect authorization header')
 
     return NextResponse.json(
       {

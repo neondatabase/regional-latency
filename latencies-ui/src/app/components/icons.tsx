@@ -1,11 +1,5 @@
 export const neon = (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 36 36"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg width="24" height="24" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#clip0_58_44)">
       <path
         fillRule="evenodd"
@@ -39,14 +33,7 @@ export const neon = (
         <stop stopColor="#62F755" />
         <stop offset="1" stopColor="#8FF986" stopOpacity="0" />
       </linearGradient>
-      <linearGradient
-        id="paint1_linear_58_44"
-        x1="36"
-        y1="36"
-        x2="14.617"
-        y2="27.683"
-        gradientUnits="userSpaceOnUse"
-      >
+      <linearGradient id="paint1_linear_58_44" x1="36" y1="36" x2="14.617" y2="27.683" gradientUnits="userSpaceOnUse">
         <stop stopOpacity="0.9" />
         <stop offset="1" stopColor="#1A1A1A" stopOpacity="0" />
       </linearGradient>
@@ -58,38 +45,20 @@ export const neon = (
 )
 
 export const GitHubSVG = (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
     <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
   </svg>
 )
 
 export const deploymentPlatforms: { [platformName: string]: JSX.Element } = {
   digitalocean: (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="65.2 173.5 32 32"
-      width="22"
-      height="22"
-      fill="#0080ff"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="65.2 173.5 32 32" width="22" height="22" fill="#0080ff">
       <path d="M81.202 205.5v-6.2c6.568 0 11.666-6.5 9.144-13.418a9.27 9.27 0 0 0-5.533-5.531c-6.912-2.502-13.425 2.575-13.425 9.14H65.2c0-10.463 10.124-18.622 21.1-15.195 4.8 1.505 8.618 5.313 10.105 10.1 3.43 10.99-4.717 21.107-15.203 21.107z" />
       <path d="M75.05 199.317v-6.165h6.168v6.165zm-4.753 4.75v-4.75h4.753v4.75h-4.753zm0-4.75h-3.973v-3.97h3.973v3.97z" />
     </svg>
   ),
   vercel: (
-    <svg
-      className="w-5 h-5"
-      width="76"
-      height="65"
-      viewBox="0 0 76 65"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg className="w-5 h-5" width="76" height="65" viewBox="0 0 76 65" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M37.5274 0L75.0548 65H0L37.5274 0Z" fill="#ffffff" />
     </svg>
   ),
