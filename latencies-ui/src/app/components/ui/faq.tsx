@@ -11,9 +11,9 @@ export function FAQ() {
         <li className="pt-2">
           <h3 className={styles.header}>What is the purpose of this application?</h3>
           <p className={styles.paragraph}>
-            This application allows you to compare the latency of a basic <code>SELECT</code> query to a Neon database
-            from various deployment platforms and regions. It provides insights that can help you make informed
-            decisions about where to deploy your application backend and Neon database.
+            By understanding the latency of a basic <code>SELECT</code> query to a Neon database from your preferred
+            hosting platform and region, you can make informed decisions about where to deploy your application backend
+            and Neon database to reduce the impact of latency between the two.
           </p>
         </li>
         <li className="pt-2">
@@ -22,16 +22,14 @@ export function FAQ() {
           </h3>
           <p className={styles.paragraph}>
             You can use the P50 and P99 measurements to approximate the best and worst case round-trip time for each
-            database query issued from your application hosting platform to your Postgres database on Neon. Use of{' '}
-            <code>JOIN</code> and batching queries to reduce the number of round trips can help improve the performance
-            of your application.
+            database query issued from your hosting platform to your Postgres database on Neon. Optimize your queries,
+            use <code>JOIN</code>s, and batch queries in a single round-trip to reduce the impact of latency on the
+            performance of your application.
           </p>
         </li>
         <li className="pt-2">
           <h3 className={styles.header}>How often is the data updated?</h3>
-          <p className={styles.paragraph}>
-            New data is collected for each hosting platform and Neon region every 15 minutes.
-          </p>
+          <p className={styles.paragraph}>New data is collected every 15 minutes.</p>
         </li>
         <li className="pt-2">
           <h3 className={styles.header}>Is the application and benchmark code open-source?</h3>
@@ -40,7 +38,7 @@ export function FAQ() {
             <Link target="_blank" href="https://github.com/evanshortiss/neon-latency-tracker/">
               neon-latency-tracker
             </Link>{' '}
-            repository on GitHub. Benchmark code that runs on each deployment platform is located in the{' '}
+            repository on GitHub. Benchmark code that runs on each hosting platform is located in the{' '}
             <Link target="_blank" href="https://github.com/evanshortiss/neon-query-bench/">
               neon-query-bench
             </Link>{' '}
@@ -72,8 +70,8 @@ export function FAQ() {
             <Link target="_blank" href="https://neon.tech/docs/serverless/serverless-driver">
               serverless driver for Postgres
             </Link>{' '}
-            is used to perform requests from each deployment platform to a Neon database. This driver is designed to
-            provide a low latency experience on both serverless and traditional deployment platforms.
+            is used to perform requests from each hosting platform to a Neon database. This driver is designed to
+            provide a low latency experience on both serverless and traditional hosting platforms.
           </p>
         </li>
         <li>
@@ -91,9 +89,9 @@ export function FAQ() {
           </p>
         </li>
         <li className="pt-2">
-          <h3 className={styles.header}>What resources are provisioned on the deployment platforms?</h3>
+          <h3 className={styles.header}>What resources are provisioned on the hosting platforms?</h3>
           <p className={styles.paragraph}>
-            The default instance size and scaling options are used on each deployment platform. For example, on
+            The default instance size and scaling options are used on each hosting platform. For example, on
             DigitalOcean App Platform the instance has 1vCPU and 1GB of memory.
           </p>
         </li>
