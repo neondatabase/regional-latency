@@ -21,14 +21,10 @@ export function FAQ() {
             How can I estimate the impact of database queries on API response times using this dashboard?
           </h3>
           <p className={styles.paragraph}>
-            You can use the P50 and P99 measurements to approximate the best and worst case impact of your database
-            queries on response times for your application.
-          </p>
-          <p className={styles.paragraph}>
-            For example, assume you are developing an API endpoint that performs 2 well-optimised database queries in
-            sequence. If the listed P99 latency for basic queries between your Neon region and cloud provider is 15
-            milliseconds and the P50 is 6 milliseconds, you can estimate that those two queries will account for at
-            least 12 to 30 milliseconds of your API endpoint&apos;s overall response time.
+            You can use the P50 and P99 measurements to approximate the best and worst case round-trip time for each
+            database query issued from your application hosting platform to your Postgres database on Neon. Use of{' '}
+            <code>JOIN</code> and batching queries to reduce the number of round trips can help improve the performance
+            of your application.
           </p>
         </li>
         <li className="pt-2">
