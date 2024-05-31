@@ -132,9 +132,9 @@ export default async function Home() {
                                   </TableRow>
                                 </TableBody>
                               </Table>
-                              {/* <div style={{ height: '150px' }}>
+                              <div style={{ height: '150px' }}>
                                 <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
-                              </div> */}
+                              </div>
                             </div>
                           )
                         })}
