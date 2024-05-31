@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
-import { IBM_Plex_Sans, Inter } from 'next/font/google'
+import { IBM_Plex_Sans } from 'next/font/google'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
 const sans = IBM_Plex_Sans({
   display: 'swap',
   variable: '--font-sans',
@@ -18,9 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} ${sans.className} font-light my-6 sm:px-6 container mx-auto bg-neutral-950 text-white`}
-      >
+      <body className={`${sans.className} font-light my-6 sm:px-6 container mx-auto bg-neutral-950 text-white`}>
         {children}
       </body>
     </html>

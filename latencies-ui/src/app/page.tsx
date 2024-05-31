@@ -83,8 +83,6 @@ export default async function Home() {
               <AccordionContent>
                 <div className="-z-10 relative space-y-3" key={region}>
                   <div className="relative z-10 rounded-[14px]">
-                    <div className="absolute inset-0 z-10 rounded-[inherit]" aria-hidden="true" />
-                    <div className="absolute inset-[5px] z-10 rounded-[10px] mix-blend-overlay" aria-hidden="true" />
                     <div className="relative z-20 w-full flex flex-col xl:rounded-lg gap-5">
                       <p className="pb-4">
                         A collection of percentiles and graphs showcasing the distribution of query times, as well as
@@ -134,9 +132,9 @@ export default async function Home() {
                                   </TableRow>
                                 </TableBody>
                               </Table>
-                              <div style={{ height: '150px' }}>
+                              {/* <div style={{ height: '150px' }}>
                                 <MinMaxChart data={item} key={`${item.neonRegion}${item.platformRegion}`}></MinMaxChart>
-                              </div>
+                              </div> */}
                             </div>
                           )
                         })}
