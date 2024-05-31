@@ -2,7 +2,7 @@
 
 import { PercentileEntry } from '@/lib/metrics'
 import React, { PureComponent } from 'react'
-import { LineChart, Line, XAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, Legend, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default class MinMaxChart extends PureComponent<{
   data: PercentileEntry

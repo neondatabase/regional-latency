@@ -20,7 +20,8 @@ const AccordionTrigger = React.forwardRef<
   React.ElementRef<typeof AccordionPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
 >(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex sticky top-0">
+  // stick top-0 and z-10 a required to make the accordion header sticky and on top of the content
+  <AccordionPrimitive.Header className="flex sticky top-0 z-10">
     <AccordionPrimitive.Trigger
       ref={ref}
       className={cn(

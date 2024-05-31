@@ -53,7 +53,8 @@ export default async function Home() {
           <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">
             round-trip time (RTT)
           </Link>{' '}
-          - for a single <code>SELECT</code> query between various cloud hosting platforms and Neon regions. Visit the{' '}
+          - for a single <code>SELECT</code> query between cloud hosting platforms and the Neon region nearest to them.
+          Visit the{' '}
           <Link className="text-neon" href={`#faq`}>
             Frequently Asked Questions
           </Link>{' '}
@@ -81,13 +82,14 @@ export default async function Home() {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="-z-10 relative space-y-3" key={region}>
-                  <div className="relative z-10 rounded-[14px]">
-                    <div className="relative z-20 w-full flex flex-col xl:rounded-lg gap-5">
+                <div className="relative space-y-3" key={region}>
+                  <div className="rounded-[14px]">
+                    <div className="w-full flex flex-col xl:rounded-lg gap-5">
                       <p className="pb-4">
-                        A collection of percentiles and graphs showcasing the distribution of query times, as well as
-                        the minimum and maximum query times seen across various hosting providers communicating with
-                        Neon&apos;s {neonRegionsToNames[region as NeonRegion]} region. Open an{' '}
+                        Percentiles representing the best and worst case scenario for query latency between Neon&apos;s{' '}
+                        {neonRegionsToNames[region as NeonRegion]} region and the listed cloud hosting platforms over
+                        the prior 12 hours. The included graphs represent the minimum and maximum query latency seen in
+                        each test performed. Open an{' '}
                         <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">
                           issue on GitHub
                         </Link>{' '}
