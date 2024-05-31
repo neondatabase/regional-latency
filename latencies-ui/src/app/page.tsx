@@ -59,7 +59,7 @@ export default async function Home() {
         <Accordion type="single" defaultValue="region-us-east-1.aws.neon.tech" collapsible className="w-full">
 				  {sortedRegionKeys.map((region) => (
             <AccordionItem key={region} value={`region-${region}`}>
-              <AccordionTrigger className="flex" disabled={data[region as NeonRegion].length === 0}>
+              <AccordionTrigger className="bg-neutral-950" disabled={data[region as NeonRegion].length === 0}>
                 <div>
                   <div className="flex items-center gap-2">
                     {neon}
@@ -70,9 +70,9 @@ export default async function Home() {
                   </div>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>             
-                <div className="space-y-3" key={region}>
-                  <div className="relative z-10 rounded-[14px] backdrop-blur-[4px]">
+              <AccordionContent>
+                <div className="-z-10 relative space-y-3" key={region}>
+                  <div className="relative z-10 rounded-[14px]">
                     <div
                       className="absolute inset-0 z-10 rounded-[inherit]"
                       aria-hidden="true"
