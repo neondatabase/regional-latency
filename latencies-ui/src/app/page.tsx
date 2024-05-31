@@ -66,7 +66,10 @@ export default async function Home() {
         <Accordion type="single" defaultValue="region-us-east-1.aws.neon.tech" collapsible className="w-full">
           {sortedRegionKeys.map((region) => (
             <AccordionItem key={region} value={`region-${region}`}>
-              <AccordionTrigger className="bg-neutral-950" disabled={data[region as NeonRegion].length === 0}>
+              <AccordionTrigger
+                className="bg-neutral-950 hover:bg-neutral-900 rounded px-2 mb-2"
+                disabled={data[region as NeonRegion].length === 0}
+              >
                 <div>
                   <div className="flex items-center gap-2">
                     {neon}
@@ -81,14 +84,14 @@ export default async function Home() {
                   </div>
                 </div>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="px-2">
                 <div className="relative space-y-3" key={region}>
                   <div className="rounded-[14px]">
                     <div className="w-full flex flex-col xl:rounded-lg gap-5">
                       <p className="pb-4">
-                        Percentiles representing the best and worst case scenario for query latency between Neon&apos;s{' '}
+                        Percentiles representing the best to worst query latency between Neon&apos;s{' '}
                         {neonRegionsToNames[region as NeonRegion]} region and the listed cloud hosting platforms over
-                        the prior 12 hours. The included graphs represent the minimum and maximum query latency seen in
+                        the past 12 hours. The included graphs represent the minimum and maximum query latency seen in
                         each test performed. Open an{' '}
                         <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">
                           issue on GitHub
