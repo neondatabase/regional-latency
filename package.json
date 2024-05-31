@@ -1,0 +1,22 @@
+{
+  "name": "neon-latencies",
+  "version": "1.0.0",
+  "private": true,
+  "description": "This project provides a dashboard showing the latency you can expect when querying a Neon database from different regions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5",
+    "prettier": "^3.2.5"
+  },
+  "lint-staged": {
+    "*.{js,css,md}": "prettier --write"
+  }
+}
