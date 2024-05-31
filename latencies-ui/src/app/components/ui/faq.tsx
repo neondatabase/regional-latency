@@ -81,7 +81,7 @@ export function FAQ() {
             >
               Free Tier size of 0.25 CU
             </Link>
-            . Neon's{' '}
+            . Neon&apos;s{' '}
             <Link
               target="_blank"
               href="https://neon.tech/docs/introduction/auto-suspend"
