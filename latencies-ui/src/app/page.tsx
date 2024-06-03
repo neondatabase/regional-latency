@@ -14,6 +14,7 @@ import MinMaxChart from './components/ui/latency-chart'
 import { GitHubSVG, deploymentPlatforms, neon, neonWithText } from './components/icons'
 import Link from 'next/link'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
+import { icons } from 'lucide-react'
 
 // Ensure that Next.js rerenders the page every 5 minutes to display the
 // most recent data from cron runs.
@@ -42,19 +43,24 @@ export default async function Home() {
           className="fill-white border-solid border-2 rounded-full p-3 border-white transition-all hover:no-underline hover:fill-neon hover:border-neon hover:text-neon right flex space-x-3"
         >
           {GitHubSVG}
-          <div className="text-white font-medium">Regional Latency</div>
+          <div className="text-white font-medium">regional-latency</div>
         </Link>
       </div>
-      <div className="space-y-4 sm:text-left text-center pb-8">
-        <h2 className="font-medium sm:text-4xl text-3xl text-white">Regional Latency</h2>
-        <p className="leading-snug tracking-extra-tight sm:max-w-screen-sm">
-          Tracking the latency between cloud hosting platforms and Neon&apos;s Postgres database regions. Visit the{' '}
-          <Link className="text-neon" href={`#faq`}>
-            {' '}
-            Frequently Asked Questions
-          </Link>{' '}
-          section to learn more.
-        </p>
+      <div className="sm:text-left text-center sm:pb-12 pb-8 flex">
+        <div className="space-y-4 sm:w-7/12 mr-0 sm:mr-8 sm:max-w-screen-sm sm:text-lg">
+          <h2 className="font-medium sm:text-4xl text-3xl text-white">Regional Latency</h2>
+          <p className="leading-snug tracking-extra-tight">
+            Tracking the latency between cloud hosting platforms and Neon&apos;s Postgres database regions. Visit the{' '}
+            <Link className="text-neon" href={`#faq`}>
+              {' '}
+              Frequently Asked Questions
+            </Link>{' '}
+            section to learn more.
+          </p>
+        </div>
+        <div className="flex-1 hidden sm:grid items-center align-center justify-center grid-cols-4 pt-8">
+          {/* TODO: Add graphic */}
+        </div>
       </div>
       {/* <p className="pt-6">Click on a Neon region to view the query latency between it and popular cloud provider infrastructure.</p> */}
       <div className="flex flex-col gap-12 pt-6">
@@ -98,7 +104,7 @@ export default async function Home() {
                           return (
                             <div key={`${item.platformName}${item.platformRegion}`}>
                               <div className="flex space-x-2 items-center">
-                                {deploymentPlatforms[item.platformName]}
+                                {deploymentPlatforms[item.platformName]('')}
                                 <h3 className="text-xl">{platformNamesFormatted[item.platformName as PlatformName]}</h3>
                               </div>
                               <p className="text-sm pt-2 pb-4 text-gray-500">
