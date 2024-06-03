@@ -11,7 +11,7 @@ import {
 } from '@/lib/platforms'
 import { FAQ } from './components/ui/faq'
 import MinMaxChart from './components/ui/latency-chart'
-import { GitHubSVG, deploymentPlatforms, neon } from './components/icons'
+import { GitHubSVG, deploymentPlatforms, neon, neonWithText } from './components/icons'
 import Link from 'next/link'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 
@@ -35,39 +35,29 @@ export default async function Home() {
 
   return (
     <main className="p-4 max-w-screen-lg m-auto relative">
-      <Link
-        href="https://github.com/evanshortiss/neon-latency-tracker/"
-        className="absolute fill-white transition-all hover:fill-neon right-0 top-0 pt-4 pr-4"
-      >
-        {GitHubSVG}
-      </Link>
-      <div className="space-y-4">
-        <h2 className="font-title text-4xl leading-[0.9] tracking-extra-tight text-white">Neon Latency Dashboard</h2>
-        <p className=" text-xl leading-snug tracking-extra-tight text-[#797d86] xl:text-lg lg:text-base">
-          Observing the latency between various hosting platforms and Neon Postgres database regions.{' '}
-        </p>
+      <div className="flex items-center justify-between mb-16">
+        {neonWithText}
+        <Link
+          href="https://github.com/evanshortiss/neon-latency-tracker/"
+          className="fill-white border-solid border-2 rounded-full p-3 border-white transition-all hover:no-underline hover:fill-neon hover:border-neon hover:text-neon right flex space-x-3"
+        >
+          {GitHubSVG}
+          <div className="text-white font-medium">Regional Latency</div>
+        </Link>
       </div>
-      <div className="pt-8">
-        <p>
-          This page provides insight into the latency - or{' '}
-          <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">
-            round-trip time (RTT)
-          </Link>{' '}
-          - for a <Link href="https://neon.tech/docs/serverless/serverless-driver">&ldquo;one-shot&ldquo; query</Link>{' '}
-          between cloud hosting platforms and the Neon region nearest to them using Neon&apos;s{' '}
-          <Link href="https://github.com/neondatabase/serverless/" target="_blank">
-            serverless driver
-          </Link>
-          . Latency between your application backend is one of many factors to consider when choosing a hosting platform
-          for your application. Visit the{' '}
+      <div className="space-y-4 sm:text-left text-center pb-8">
+        <h2 className="font-medium sm:text-4xl text-3xl text-white">Regional Latency</h2>
+        <p className="leading-snug tracking-extra-tight sm:max-w-screen-sm">
+          Tracking the latency between cloud hosting platforms and Neon&apos;s Postgres database regions. Visit the{' '}
           <Link className="text-neon" href={`#faq`}>
+            {' '}
             Frequently Asked Questions
           </Link>{' '}
-          section to learn more about the data presented.
+          section to learn more.
         </p>
       </div>
       {/* <p className="pt-6">Click on a Neon region to view the query latency between it and popular cloud provider infrastructure.</p> */}
-      <div className="flex flex-col gap-12 pt-4">
+      <div className="flex flex-col gap-12 pt-6">
         <Accordion type="single" defaultValue="region-us-east-1.aws.neon.tech" collapsible className="w-full">
           {sortedRegionKeys.map((region) => (
             <AccordionItem key={region} value={`region-${region}`}>
@@ -94,10 +84,9 @@ export default async function Home() {
                   <div className="rounded-[14px]">
                     <div className="w-full flex flex-col xl:rounded-lg gap-5">
                       <p className="pb-4">
-                        Percentiles representing the best to worst query latency between Neon&apos;s{' '}
+                        Percentiles and graphs representing the best to worst query latency between Neon&apos;s{' '}
                         {neonRegionsToNames[region as NeonRegion]} region and the listed cloud hosting platforms over
-                        the past 12 hours. The included graphs represent the minimum and maximum query latency seen in
-                        each test performed. Open an{' '}
+                        the past 12 hours. Open an{' '}
                         <Link href="https://github.com/evanshortiss/neon-latency-tracker/issues/new?assignees=evanshortiss&labels=&projects=&template=region-provider-request.md&title=New+Region+or+Provider+Request">
                           issue on GitHub
                         </Link>{' '}
