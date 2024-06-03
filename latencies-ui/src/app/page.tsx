@@ -53,8 +53,8 @@ export default async function Home() {
           <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">
             round-trip time (RTT)
           </Link>{' '}
-          - for a <Link href="https://neon.tech/docs/serverless/serverless-driver">"one-shot" query</Link> between cloud
-          hosting platforms and the Neon region nearest to them using Neon's{' '}
+          - for a <Link href="https://neon.tech/docs/serverless/serverless-driver">&ldquo;one-shot&ldquo; query</Link>{' '}
+          between cloud hosting platforms and the Neon region nearest to them using Neon&apos;s{' '}
           <Link href="https://github.com/neondatabase/serverless/" target="_blank">
             serverless driver
           </Link>
