@@ -53,8 +53,12 @@ export default async function Home() {
           <Link href="https://www.cloudflare.com/en-gb/learning/cdn/glossary/round-trip-time-rtt/" target="_blank">
             round-trip time (RTT)
           </Link>{' '}
-          - for a single <code>SELECT</code> query between cloud hosting platforms and the Neon region nearest to them.
-          Latency between your application backend is one of many factors to consider when choosing a hosting platform
+          - for a <Link href="https://neon.tech/docs/serverless/serverless-driver">"one-shot" query</Link> between cloud
+          hosting platforms and the Neon region nearest to them using Neon's{' '}
+          <Link href="https://github.com/neondatabase/serverless/" target="_blank">
+            serverless driver
+          </Link>
+          . Latency between your application backend is one of many factors to consider when choosing a hosting platform
           for your application. Visit the{' '}
           <Link className="text-neon" href={`#faq`}>
             Frequently Asked Questions
