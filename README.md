@@ -1,22 +1,38 @@
-# Neon Latency Dashboard
+# Neon Regional Latency Dashboard
 
-This project provides a dashboard showing the latency you can expect when querying a Neon database from different regions.
+View the dashboard at (neon.tech/regional-latency)[https://neon.tech/regional-latency].
 
 ## Architecture
 
-This tool works by ingesting data from "runners" that check their latency to
-Neon databases.
+This tool works by collecting data from "runners" that check their latency to a
+configured Neon database.
 
-A runner is a function or server that uses the [neon-query-bench](https://github.com/evanshortiss/neon-query-bench)
-tool to test how long it takes to run `SELECT` queries against a Neon
-database. Internally, the [neon-query-bench](https://github.com/evanshortiss/neon-query-bench)
-tool uses [Drizzle](https://orm.drizzle.team/) and the Neon [serverless driver](https://github.com/neondatabase/serverless/).
+[Regional Latency Architecture](/architecture.png)
 
-Each runner POSTs their results to a centralised function that stores them in
-a Neon database. This function is protected by an API key.
+A runner is a function or server that implements the
+[neon-query-bench](https://github.com/evanshortiss/neon-query-bench) module.
+We're measuring how long it takes to receive a response to a submillisecond
+`SELECT` query against a Neon database.
 
-- id
-- platform_name - String, e.g "vercel"
-- platform_region - String, e.g "iad1"
-- latencies - Array of integers
-- neon_region - (FK, or just string?)
+## Repository Structure
+
+## latencies-ui
+
+A Next.js application that:
+
+- Collects results from runners every 15 minutes.
+- Renders results as a set of percentiles and graphs.
+
+## fly
+
+Contains a set of configurations to deploy runners in various Fly.io regions.
+
+Refer to the [README](/fly/README.md) in that folder form more details.
+
+## digitalocean
+
+Contains a set of configurations to deploy runners on DigitalOcean's AppPlatform regions.
+
+## railway
+
+TODO
