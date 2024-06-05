@@ -1,6 +1,6 @@
 # Neon Regional Latency Dashboard
 
-View the dashboard at (neon.tech/regional-latency)[https://neon.tech/regional-latency].
+View the dashboard at [neon.tech/regional-latency](https://neon.tech/regional-latency).
 
 ## Architecture
 
