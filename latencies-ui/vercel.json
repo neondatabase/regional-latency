@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/regional-latency" },
-    { "source": "/:asset*", "destination": "/regional-latency/:asset*" },
+    { "source": "/", "destination": "/demos/regional-latency" },
+    { "source": "/:asset*", "destination": "/demos/regional-latency/:asset*" },
     { "source": "/(.*)", "destination": "/" }
   ],
   "crons": [
