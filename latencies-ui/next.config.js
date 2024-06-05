@@ -3,7 +3,7 @@
 const isProd = process.env.NODE_ENV === 'production'
 
 const nextConfig = {
-  basePath: isProd ? '/regional-latency' : undefined,
+  basePath: isProd ? '/demos/regional-latency' : undefined,
 }
 
 module.exports = nextConfig
