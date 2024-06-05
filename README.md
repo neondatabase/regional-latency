@@ -7,7 +7,7 @@ View the dashboard at (neon.tech/regional-latency)[https://neon.tech/regional-la
 This tool works by collecting data from "runners" that check their latency to a
 configured Neon database.
 
-[Regional Latency Architecture](/architecture.png)
+![Regional Latency Architecture](/architecture.png)
 
 A runner is a function or server that implements the
 [neon-query-bench](https://github.com/evanshortiss/neon-query-bench) module.
